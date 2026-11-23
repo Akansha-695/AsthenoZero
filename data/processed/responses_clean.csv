@@ -1,0 +1,140 @@
+age_group,screen_time_category,sleep_category,breaks_per_hour_category,primary_device,vision_correction,symptom_eye_strain,symptom_headache,symptom_blurred_vision,symptom_dry_eyes,symptom_difficulty_focusing,exploratory_symptom_score,duplicate_candidate
+19-24,2-4 hours,5-6 hours,2-3,Phone,Yes,Never,Never,Never,Often,Never,2,False
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,7-8 hours,2-3,All roughly equal,Yes,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,2-3,All roughly equal,Yes,Always,Often,Never,Sometimes,Never,6,False
+19-24,4-6 hours,Less than 5 hours,1-2,Phone,Yes,Often,Often,Often,Often,Often,10,False
+19-24,4-6 hours,7-8 hours,2-3,Phone,Yes,Often,Sometimes,Sometimes,Sometimes,Often,7,False
+19-24,6-8 hours,5-6 hours,2-3,Phone,No,Never,Sometimes,Sometimes,Sometimes,Never,3,False
+19-24,More than 8 hours,7-8 hours,2-3,Phone,Yes,Sometimes,Sometimes,Sometimes,Never,Sometimes,4,False
+19-24,More than 8 hours,7-8 hours,0,Phone,No,Never,Sometimes,Often,Often,Sometimes,6,False
+19-24,6-8 hours,7-8 hours,1-2,All roughly equal,Yes,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,6-8 hours,6-7 hours,2-3,Phone,Yes,Sometimes,Often,Sometimes,Sometimes,Often,7,False
+19-24,2-4 hours,Less than 5 hours,1-2,Laptop / PC,Yes,Often,Often,Often,Often,Often,10,False
+19-24,More than 8 hours,6-7 hours,0,Phone,No,Sometimes,Never,Never,Sometimes,Sometimes,3,False
+19-24,More than 8 hours,6-7 hours,0,Phone,No,Sometimes,Sometimes,Never,Sometimes,Sometimes,4,False
+19-24,More than 8 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Often,Sometimes,Sometimes,Sometimes,6,False
+15-18,2-4 hours,6-7 hours,1-2,Phone,No,Sometimes,Sometimes,Always,Always,Sometimes,9,False
+19-24,4-6 hours,7-8 hours,4-5,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,1-2,Phone,Yes,Always,Sometimes,Never,Never,Sometimes,5,False
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Sometimes,Sometimes,Never,Sometimes,Sometimes,4,False
+19-24,2-4 hours,7-8 hours,1-2,Phone,Yes,Always,Always,Often,Sometimes,Never,9,False
+19-24,6-8 hours,6-7 hours,4-5,Phone,Yes,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,More than 8 hours,5-6 hours,2-3,Phone,Yes,Sometimes,Often,Often,Sometimes,Often,8,False
+19-24,6-8 hours,5-6 hours,0,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,6-8 hours,6-7 hours,1-2,Phone,No,Sometimes,Never,Often,Often,Sometimes,6,False
+19-24,6-8 hours,6-7 hours,2-3,Phone,No,Often,Often,Often,Always,Sometimes,10,False
+19-24,4-6 hours,7-8 hours,1-2,Phone,No,Never,Never,Sometimes,Never,Never,1,False
+35-45,4-6 hours,5-6 hours,2-3,Phone,Yes,Sometimes,Often,Sometimes,Never,Never,4,False
+19-24,2-4 hours,5-6 hours,2-3,Laptop / PC,No,Sometimes,Never,Never,Never,Sometimes,2,False
+25-34,2-4 hours,7-8 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,1-2,All roughly equal,No,Often,Often,Sometimes,Never,Often,7,False
+15-18,More than 8 hours,7-8 hours,0,Phone,No,Often,Often,Often,Often,Often,10,False
+19-24,6-8 hours,5-6 hours,2-3,Phone,Yes,Sometimes,Often,Sometimes,Sometimes,Often,7,False
+19-24,6-8 hours,6-7 hours,1-2,Phone,No,Often,Sometimes,Never,Sometimes,Sometimes,5,False
+19-24,More than 8 hours,6-7 hours,5 or more,Phone,Yes,Sometimes,Sometimes,Never,Never,Never,2,False
+19-24,6-8 hours,5-6 hours,1-2,Phone,Yes,Often,Sometimes,Sometimes,Sometimes,Often,7,False
+19-24,4-6 hours,6-7 hours,4-5,Phone,No,Sometimes,Sometimes,Never,Sometimes,Never,3,False
+19-24,6-8 hours,6-7 hours,5 or more,Phone,No,Never,Never,Never,Never,Never,0,False
+15-18,4-6 hours,7-8 hours,2-3,Phone,Yes,Never,Sometimes,Often,Often,Sometimes,6,False
+45+,6-8 hours,6-7 hours,5 or more,Phone,No,Often,Sometimes,Never,Sometimes,Always,7,False
+19-24,6-8 hours,7-8 hours,5 or more,Laptop / PC,No,Never,Sometimes,Never,Sometimes,Never,2,False
+19-24,4-6 hours,7-8 hours,1-2,Phone,No,Sometimes,Often,Never,Never,Sometimes,4,False
+19-24,6-8 hours,Less than 5 hours,2-3,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,4-6 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Sometimes,Sometimes,Often,Sometimes,6,False
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,True
+19-24,More than 8 hours,6-7 hours,1-2,Phone,No,Never,Never,Always,Never,Often,5,False
+19-24,6-8 hours,7-8 hours,2-3,Phone,No,Sometimes,Never,Sometimes,Never,Never,2,False
+19-24,More than 8 hours,5-6 hours,1-2,All roughly equal,Yes,Always,Sometimes,Always,Often,Always,12,False
+19-24,More than 8 hours,7-8 hours,5 or more,Phone,No,Often,Often,Never,Sometimes,Sometimes,6,False
+19-24,More than 8 hours,5-6 hours,1-2,Phone,No,Sometimes,Sometimes,Never,Never,Sometimes,3,False
+19-24,More than 8 hours,7-8 hours,1-2,Phone,No,Sometimes,Sometimes,Never,Never,Never,2,False
+19-24,More than 8 hours,5-6 hours,1-2,All roughly equal,Yes,Often,Never,Often,Often,Sometimes,7,False
+19-24,More than 8 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Often,Sometimes,Sometimes,Always,8,False
+15-18,4-6 hours,7-8 hours,5 or more,Phone,Yes,Often,Sometimes,Sometimes,Often,Always,9,False
+15-18,More than 8 hours,6-7 hours,2-3,Phone,No,Sometimes,Never,Sometimes,Sometimes,Never,3,False
+19-24,More than 8 hours,6-7 hours,1-2,All roughly equal,No,Sometimes,Never,Sometimes,Sometimes,Sometimes,4,False
+19-24,6-8 hours,7-8 hours,0,Phone,Yes,Often,Sometimes,Sometimes,Sometimes,Often,7,False
+19-24,More than 8 hours,More than 8 hours,4-5,All roughly equal,No,Often,Sometimes,Often,Sometimes,Always,9,False
+19-24,More than 8 hours,6-7 hours,5 or more,Phone,No,Often,Often,Never,Never,Never,4,False
+19-24,6-8 hours,5-6 hours,5 or more,Phone,Yes,Sometimes,Sometimes,Always,Sometimes,Often,8,False
+19-24,4-6 hours,6-7 hours,0,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,4-6 hours,7-8 hours,1-2,Phone,Yes,Never,Never,Never,Sometimes,Never,1,False
+19-24,6-8 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Sometimes,Never,Never,Often,4,False
+19-24,6-8 hours,6-7 hours,1-2,Laptop / PC,No,Sometimes,Often,Never,Never,Never,3,False
+19-24,4-6 hours,6-7 hours,5 or more,Laptop / PC,Yes,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,2-3,Phone,No,Sometimes,Always,Never,Sometimes,Never,5,False
+19-24,6-8 hours,6-7 hours,4-5,All roughly equal,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,4-6 hours,6-7 hours,2-3,Laptop / PC,No,Sometimes,Sometimes,Never,Sometimes,Sometimes,4,False
+19-24,4-6 hours,6-7 hours,4-5,Phone,Yes,Sometimes,Sometimes,Never,Never,Sometimes,3,False
+25-34,More than 8 hours,5-6 hours,1-2,All roughly equal,Yes,Sometimes,Never,Never,Never,Never,1,False
+19-24,6-8 hours,5-6 hours,2-3,Laptop / PC,Yes,Sometimes,Always,Never,Sometimes,Sometimes,6,False
+19-24,2-4 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Sometimes,Often,Sometimes,Often,7,False
+45+,2-4 hours,5-6 hours,5 or more,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,More than 8 hours,More than 8 hours,1-2,All roughly equal,No,Always,Always,Often,Often,Always,13,False
+19-24,More than 8 hours,More than 8 hours,1-2,All roughly equal,No,Often,Always,Often,Often,Always,12,False
+19-24,More than 8 hours,7-8 hours,1-2,All roughly equal,Yes,Never,Never,Sometimes,Never,Sometimes,2,False
+15-18,4-6 hours,6-7 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,Less than 2 hours,5-6 hours,0,Phone,Yes,Never,Sometimes,Sometimes,Never,Sometimes,3,False
+19-24,More than 8 hours,6-7 hours,1-2,Phone,Yes,Often,Never,Sometimes,Sometimes,Often,6,False
+19-24,6-8 hours,6-7 hours,0,Phone,No,Never,Never,Never,Never,Always,3,False
+19-24,2-4 hours,6-7 hours,0,Phone,No,Never,Sometimes,Sometimes,Never,Never,2,False
+19-24,More than 8 hours,6-7 hours,1-2,Phone,No,Never,Sometimes,Sometimes,Never,Never,2,False
+19-24,4-6 hours,5-6 hours,5 or more,All roughly equal,Yes,Never,Often,Never,Often,Never,4,False
+25-34,6-8 hours,7-8 hours,4-5,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Always,Always,Often,Sometimes,10,False
+19-24,2-4 hours,5-6 hours,1-2,Laptop / PC,Yes,Sometimes,Often,Never,Sometimes,Never,4,False
+19-24,Less than 2 hours,6-7 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,2-4 hours,7-8 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,6-8 hours,7-8 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,Less than 5 hours,5 or more,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Often,6,False
+19-24,4-6 hours,5-6 hours,2-3,Laptop / PC,No,Often,Sometimes,Often,Never,Sometimes,6,False
+19-24,4-6 hours,6-7 hours,1-2,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,2-4 hours,6-7 hours,1-2,Phone,No,Sometimes,Sometimes,Sometimes,Never,Never,3,False
+19-24,2-4 hours,7-8 hours,2-3,Tab,Yes,Often,Sometimes,Sometimes,Sometimes,Sometimes,6,False
+19-24,4-6 hours,7-8 hours,1-2,Laptop / PC,Yes,Never,Never,Never,Never,Never,0,False
+19-24,More than 8 hours,7-8 hours,2-3,Phone,Yes,Often,Often,Sometimes,Often,Sometimes,8,False
+15-18,6-8 hours,6-7 hours,0,Phone,No,Often,Often,Sometimes,Often,Often,9,False
+25-34,4-6 hours,7-8 hours,5 or more,Phone,Yes,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+15-18,6-8 hours,7-8 hours,1-2,All roughly equal,No,Sometimes,Often,Often,Often,Often,9,False
+19-24,6-8 hours,7-8 hours,5 or more,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Often,Often,Sometimes,Often,Sometimes,8,False
+15-18,4-6 hours,5-6 hours,2-3,Phone,No,Often,Sometimes,Sometimes,Never,Sometimes,5,False
+15-18,6-8 hours,Less than 5 hours,5 or more,Laptop / PC,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,6-7 hours,4-5,Phone,No,Sometimes,Sometimes,Never,Never,Never,2,False
+19-24,4-6 hours,6-7 hours,0,All roughly equal,No,Sometimes,Sometimes,Often,Sometimes,Sometimes,6,False
+25-34,More than 8 hours,7-8 hours,2-3,Laptop / PC,Yes,Sometimes,Sometimes,Often,Sometimes,Sometimes,6,False
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,True
+19-24,4-6 hours,6-7 hours,2-3,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,True
+19-24,2-4 hours,6-7 hours,2-3,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Sometimes,5,False
+19-24,2-4 hours,7-8 hours,0,Phone,No,Sometimes,Sometimes,Sometimes,Sometimes,Often,6,False
+19-24,More than 8 hours,6-7 hours,2-3,Phone,Yes,Often,Sometimes,Sometimes,Sometimes,Always,8,False
+19-24,4-6 hours,7-8 hours,5 or more,Laptop / PC,Yes,Sometimes,Sometimes,Never,Often,Never,4,False
+19-24,6-8 hours,7-8 hours,2-3,Phone,No,Often,Often,Never,Never,Often,6,False
+19-24,4-6 hours,6-7 hours,1-2,Phone,No,Sometimes,Often,Never,Sometimes,Often,6,False
+19-24,Less than 2 hours,6-7 hours,1-2,Phone,No,Sometimes,Never,Never,Sometimes,Never,2,False
+15-18,4-6 hours,7-8 hours,5 or more,Phone,No,Sometimes,Sometimes,Never,Sometimes,Never,3,False
+19-24,2-4 hours,6-7 hours,1-2,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,2-4 hours,More than 8 hours,5 or more,Phone,Yes,Sometimes,Sometimes,Often,Never,Often,6,False
+15-18,6-8 hours,5-6 hours,1-2,Phone,Yes,Sometimes,Never,Sometimes,Sometimes,Sometimes,4,False
+19-24,6-8 hours,5-6 hours,1-2,All roughly equal,No,Never,Sometimes,Sometimes,Often,Sometimes,5,False
+15-18,2-4 hours,5-6 hours,2-3,Laptop / PC,No,Sometimes,Never,Sometimes,Never,Sometimes,3,False
+15-18,6-8 hours,6-7 hours,1-2,Phone,No,Sometimes,Sometimes,Never,Never,Never,2,False
+19-24,6-8 hours,7-8 hours,2-3,Phone,Yes,Never,Never,Never,Never,Sometimes,1,False
+19-24,6-8 hours,5-6 hours,5 or more,Phone,No,Sometimes,Never,Never,Never,Never,1,False
+15-18,More than 8 hours,5-6 hours,2-3,Phone,No,Never,Never,Never,Never,Never,0,False
+19-24,6-8 hours,5-6 hours,1-2,Phone,Yes,Often,Always,Often,Always,Often,12,False
+19-24,4-6 hours,7-8 hours,1-2,Phone,Yes,Never,Never,Never,Never,Never,0,False
+19-24,6-8 hours,7-8 hours,2-3,Phone,Yes,Never,Never,Never,Never,Never,0,False
+19-24,6-8 hours,6-7 hours,4-5,Phone,No,Never,Sometimes,Never,Never,Never,1,False
+19-24,6-8 hours,More than 8 hours,2-3,Phone,Yes,Often,Often,Often,Often,Always,11,False
+19-24,More than 8 hours,6-7 hours,5 or more,Phone,No,Sometimes,Often,Never,Sometimes,Often,6,False
+15-18,2-4 hours,5-6 hours,2-3,Laptop / PC,No,Never,Sometimes,Never,Sometimes,Never,2,False
+19-24,2-4 hours,5-6 hours,2-3,Laptop / PC,Yes,Never,Sometimes,Never,Sometimes,Never,2,False
+19-24,2-4 hours,5-6 hours,0,Tab,No,Often,Often,Often,Often,Often,10,False
+25-34,Less than 2 hours,Less than 5 hours,4-5,Laptop / PC,No,Never,Never,Never,Never,Never,0,False
+25-34,Less than 2 hours,6-7 hours,4-5,Laptop / PC,No,Never,Never,Never,Never,Never,0,False
+19-24,4-6 hours,5-6 hours,2-3,Phone,No,Never,Sometimes,Never,Never,Never,1,False
+19-24,More than 8 hours,6-7 hours,1-2,Phone,No,Sometimes,Sometimes,Never,Sometimes,Sometimes,4,False
+25-34,More than 8 hours,7-8 hours,2-3,All roughly equal,Yes,Sometimes,Never,Never,Never,Never,1,False
+19-24,More than 8 hours,6-7 hours,5 or more,Phone,Yes,Often,Often,Sometimes,Sometimes,Never,6,False

@@ -1,0 +1,8 @@
+pandas
+openpyxl
+scikit-learn
+streamlit>=1.51,<2
+joblib
+streamlit-webrtc>=0.68,<1
+mediapipe>=0.10.35,<0.11
+av>=15.1
