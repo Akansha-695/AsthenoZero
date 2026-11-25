@@ -1,13 +1,11 @@
 # AsthenoZero: Precision Ocular Ergonomics & Digital Asthenopia Suite
 ## Complete Technical, Clinical & Architectural Documentation
 
----
-
-**Version:** 2.5 Pro (Clinical Edition)  
-**Author / Developer:** AsthenoZero Development & Research Team  
+**Lead Author & Researcher:** Akansha Kashyap  
+**LinkedIn:** [linkedin.com/in/akansha-kashyap-b6a32b362](https://www.linkedin.com/in/akansha-kashyap-b6a32b362)  
 **System Classification:** Digital Health / Software as a Medical Device (SaMD) Investigational Prototype  
-**Date of Issue:** November 2026  
-**License / IP Status:** Patent Pending & Proprietary Clinical Architecture  
+**Date of Release:** 2026  
+**License:** Permissive Open-Source License (c) 2026 Akansha Kashyap  
 
 ---
 

@@ -112,3 +112,18 @@ Eye-Risk/
 
 - **Zero Frame Storage**: Webcam frames are processed in-memory directly on the local Python server for landmark tracking and are immediately discarded. Frames are never stored, written to disk, or sent to cloud APIs.
 - **Local Isolation**: Diary records and paired research entries stay inside your local browser session memory until you explicitly choose to export them as CSV.
+
+---
+
+## Author & Contact
+
+* **Lead Developer & Researcher:** **Akansha Kashyap**
+* **LinkedIn:** [Akansha Kashyap on LinkedIn](https://www.linkedin.com/in/akansha-kashyap-b6a32b362)
+
+---
+
+## License
+
+This project is licensed under the permissive open-source license. See the [LICENSE](file:///d:/Eye-Risk/LICENSE) file for complete terms and copyright details.
+
+Copyright (c) 2026 Akansha Kashyap. All rights reserved.

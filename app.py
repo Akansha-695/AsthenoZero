@@ -192,6 +192,11 @@ def _render_sidebar() -> None:
         st.html(
             """<div style="font-size: 0.72rem; color: #64748B; line-height: 1.5; padding: 4px;">
 <strong>Educational Notice:</strong> AsthenoZero is an investigational screening tool for personal reflection. It does not diagnose medical conditions or substitute for professional ophthalmic examination.
+</div>
+<div style="font-size: 0.76rem; color: #94A3B8; line-height: 1.6; padding: 6px 4px 2px 4px; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 8px;">
+<div><strong>Author:</strong> <span style="color:#F8FAFC; font-weight:600;">Akansha Kashyap</span></div>
+<div style="margin-top: 3px;"><a href="https://www.linkedin.com/in/akansha-kashyap-b6a32b362" target="_blank" style="color:#38BDF8; text-decoration:none; font-weight:500;">🔗 View LinkedIn Profile</a></div>
+<div style="font-size: 0.68rem; color: #64748B; margin-top: 3px;">License: Permissive Open-Source &bull; &copy; 2026</div>
 </div>"""
         )
 
