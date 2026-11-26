@@ -310,10 +310,10 @@ def generate_clinical_html_report(
 <div class="section-title">Diagnostic Objective Blink Evaluation</div>
 {blink_html}
 
-<div class="section-title">Ocular Condition Vulnerability & Risk Stratification</div>
+<div class="section-title">Eye Health & Condition Vulnerabilities & Risk Stratification</div>
 {conditions_html}
 
-<div class="section-title">Targeted Ophthalmic Nutritional & Dietary Protocol</div>
+<div class="section-title">Targeted Eye Nutrition & Dietary Protocol</div>
 {diet_html}
 
 <div class="section-title">Personalized Evidence-Based Clinical Action Plan</div>

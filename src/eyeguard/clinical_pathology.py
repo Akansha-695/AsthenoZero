@@ -218,3 +218,129 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
         })
 
     return diet_items
+
+
+def calculate_divergence_index(
+    survey_score: float,
+    blink_rate: float | None = None,
+    pump_efficiency: float | None = None,
+) -> dict[str, Any]:
+    """Calculates the Subjective-Objective Asthenopia Divergence Index (SO-DI).
+
+    Identifies 'Silent Asthenopia' where users perceive low discomfort but exhibit
+    severe physiological blink suppression or high incomplete blink rates.
+    """
+    if blink_rate is None:
+        return {
+            "has_camera_data": False,
+            "quadrant": "Survey Only (Webcam Unpaired)",
+            "divergence_score": 0.0,
+            "silent_risk": False,
+            "badge_color": "#64748B",
+            "interpretation": "Run the 60-second webcam diagnostic to cross-validate perceived symptoms against objective blink kinematics.",
+        }
+
+    # Normalize survey score (0-15) to 0-100% scale
+    subj_stress_pct = (min(15.0, max(0.0, survey_score)) / 15.0) * 100.0
+
+    # Normalize blink suppression (18 blinks/min is 0% suppression; 4 blinks/min is 100% suppression)
+    obj_suppression_pct = max(0.0, min(100.0, (18.0 - blink_rate) / 14.0 * 100.0))
+
+    # Incorporate incomplete blink penalty if available
+    if pump_efficiency is not None:
+        incomplete_penalty = (100.0 - pump_efficiency) * 0.4
+        obj_suppression_pct = min(100.0, obj_suppression_pct + incomplete_penalty)
+
+    # Divergence delta = Objective suppression - Subjective report
+    delta = obj_suppression_pct - subj_stress_pct
+
+    # Quadrant Classification
+    if subj_stress_pct <= 30.0 and obj_suppression_pct >= 60.0:
+        quadrant = "Silent Asthenopia (High Asymptomatic Risk)"
+        badge_color = "#EF4444"
+        silent_risk = True
+        interp = (
+            "Critical Discrepancy: You report feeling comfortable, but your objective webcam blink rate "
+            f"({blink_rate:.1f}/min) indicates acute 70%+ blink suppression. Your corneal sensory nerves may be "
+            "experiencing desensitization from chronic tear evaporation. High risk of unperceived Meibomian gland stagnation."
+        )
+    elif subj_stress_pct >= 55.0 and obj_suppression_pct >= 55.0:
+        quadrant = "Concordant High Asthenopia"
+        badge_color = "#EF4444"
+        silent_risk = False
+        interp = (
+            f"Acute Alignment: Severe subjective discomfort matches severe objective blink suppression ({blink_rate:.1f}/min). "
+            "Both extraocular muscles and tear film are experiencing active desiccating stress. Immediate micro-break advised."
+        )
+    elif subj_stress_pct <= 35.0 and obj_suppression_pct <= 35.0:
+        quadrant = "Concordant Ocular Homeostasis"
+        badge_color = "#10B981"
+        silent_risk = False
+        interp = (
+            f"Optimal Harmony: Low reported discomfort is verified by healthy physiological blinking ({blink_rate:.1f}/min). "
+            "Precorneal tear film and ciliary focus remain in balance."
+        )
+    else:
+        quadrant = "Compensatory Adaptive Strain"
+        badge_color = "#F59E0B"
+        silent_risk = False
+        interp = (
+            f"Moderate Divergence (Delta: {delta:+.1f}%): Discomfort is present but blinking remains partially adaptive. "
+            "Visual strain is likely driven by viewing proximity or cervical neck posture rather than tear film collapse alone."
+        )
+
+    return {
+        "has_camera_data": True,
+        "quadrant": quadrant,
+        "divergence_score": round(delta, 1),
+        "silent_risk": silent_risk,
+        "badge_color": badge_color,
+        "subjective_pct": round(subj_stress_pct, 1),
+        "objective_pct": round(obj_suppression_pct, 1),
+        "interpretation": interp,
+    }
+
+
+def simulate_5year_ocular_projection(
+    screen_hours: float,
+    breaks_per_hr: int,
+    years: int,
+) -> dict[str, Any]:
+    """Projects future Meibomian gland atrophy, Tear Break-Up Time (TBUT), and ciliary spasm risk over 1 to 5 years."""
+    # Base risk factor from daily screen exposure and break deficiency
+    exposure_factor = max(0.5, screen_hours / 6.0)
+    break_deficiency = max(0.2, (3.0 - breaks_per_hr) / 3.0)
+    risk_scalar = exposure_factor * (1.0 + break_deficiency * 0.8)
+
+    # Unmitigated projection over time
+    meibomian_atrophy_unmitigated = min(68.0, 6.0 + (years * 9.5 * risk_scalar))
+    tbut_unmitigated = max(2.2, 11.5 - (years * 1.6 * risk_scalar))
+    ciliary_spasm_idx = min(95.0, 15.0 + (years * 14.0 * risk_scalar))
+
+    # Mitigated with AsthenoZero protocol (20-20-20 breaks + blink exercises + Omega-3)
+    meibomian_atrophy_mitigated = min(8.0, 3.5 + (years * 0.8))
+    tbut_mitigated = min(12.5, max(9.5, 11.0 - (years * 0.2)))
+    ciliary_spasm_mitigated = min(18.0, max(5.0, 10.0 - (years * 0.5)))
+
+    # Risk tiers
+    if meibomian_atrophy_unmitigated > 35.0:
+        gland_status = "Severe Meibomian Gland Drop-Out (Permanent Duct Atrophy)"
+        status_color = "#EF4444"
+    elif meibomian_atrophy_unmitigated > 20.0:
+        gland_status = "Moderate Meibomian Duct Tortuosity & Thickened Secretions"
+        status_color = "#F59E0B"
+    else:
+        gland_status = "Mild Reversible Evaporative Stress"
+        status_color = "#38BDF8"
+
+    return {
+        "years": years,
+        "unmitigated_atrophy_pct": round(meibomian_atrophy_unmitigated, 1),
+        "mitigated_atrophy_pct": round(meibomian_atrophy_mitigated, 1),
+        "unmitigated_tbut_seconds": round(tbut_unmitigated, 1),
+        "mitigated_tbut_seconds": round(tbut_mitigated, 1),
+        "ciliary_spasm_index": round(ciliary_spasm_idx, 1),
+        "mitigated_ciliary_index": round(ciliary_spasm_mitigated, 1),
+        "gland_status": gland_status,
+        "status_color": status_color,
+    }

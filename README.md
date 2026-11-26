@@ -2,7 +2,7 @@
 
 **AsthenoZero** is a state-of-the-art precision digital health suite for quantifying, monitoring, and mitigating digital eye strain (asthenopia) and ocular surface micro-trauma.
 
-The v2.5 release integrates an ultra-modern clinical dashboard, real-time computer vision blink diagnostics, Altair-powered longitudinal telemetry, synthetic neuro-ocular audio chimes, guided ocular muscle physical therapy, and an advanced **OcuCoins Habit Credit Economy & Strict Rehabilitation Protocol**.
+The v2.5 release integrates an ultra-modern clinical dashboard, real-time computer vision blink diagnostics, Altair-powered longitudinal telemetry, synthetic neuro-ocular audio chimes, guided ocular muscle physical therapy, and an advanced **AsthenoCredits Habit Credit Economy & Strict Rehabilitation Protocol**.
 
 The platform is investigational and educational. It does not replace formal examination by a licensed ophthalmologist or optometrist.
 
@@ -22,31 +22,39 @@ The platform is investigational and educational. It does not replace formal exam
    - Automatically generates prioritized interventions across Workstation Ergonomics, 20-20-20 Micro-Breaks, Ocular Surface & Blinking Mechanics, and Circadian Sleep Hygiene.
    - **One-Click Clinical Assessment Report**: Export a publication-quality, printable HTML summary report with vector gauges, telemetry tables, and care recommendations (printable to PDF with `Ctrl+P`).
 
-3. **Live Blink Diagnostic Suite (Webcam Computer Vision)**
-   - Powered by Google MediaPipe Face Mesh in-memory video stream.
+3. **Live Blink Diagnostic Suite & Biometric Telemetry (Webcam Computer Vision)**
+   - Powered by Google MediaPipe Face Mesh in-memory zero-persistence video stream.
    - 5-second resting baseline calibration followed by a standardized 60-second reading task.
-   - Rich clinical reading passage with customizable typography sizing and high-contrast night mode.
+   - **Incomplete vs. Complete Blink Ratio & Meibomian Pump Efficiency**: Categorizes full corneal closures vs partial micro-blinks to evaluate lipid secretion efficiency.
+   - **Real-Time Ergonomic Screen Distance & Posture**: Calculates viewing distance (inches) from outer canthal landmarks and warns of forward slouch.
+   - **Ambient Room Lighting (Lux Proxy) & Contrast Stress**: Samples peripheral illumination to detect eye-straining high-contrast screen environments.
    - Quantitative blink frequency comparison against clinical baselines (resting 15–20 vs screen reading 5–8 blinks/min).
    - Optional anonymous paired-data CSV export for clinical research.
 
-4. **OcuCoins Credit Economy & Strict Rehabilitation Protocol**
-   - Daily habit streak maintenance coupled with earning **OcuCoins** (`+15` for diary logging, `+20` for break timers, `+25` for vision gym drills, `+35` for blink diagnostics).
+4. **AsthenoCredits Credit Economy & Strict Rehabilitation Protocol**
+   - Daily habit streak maintenance coupled with earning **AsthenoCredits** (`+15` for diary logging, `+20` for break timers, `+25` for vision gym drills, `+35` for blink diagnostics).
    - Streak Shields & emergency streak repairs using accumulated coins.
    - **Strict Ocular Rehabilitation Protocol**: If a user's streak breaks and their coin vault is depleted (0 coins), bypass purchases are locked. The user must fulfill all 3 therapeutic recovery tasks (Vision Gym exercise, 20-20-20 micro-break, and calibrated 60s blink diagnostic) to reinstate their streak.
 
-5. **Longitudinal Habit Diary & Altair Analytics**
+5. **Silent Asthenopia Detector & 5-Year Eye Twin Simulator**
+   - **Subjective-Objective Divergence Index (SO-DI)**: Identifies "Silent Asthenopia" where cognitive adaptation masks severe physiological blink suppression and tear film breakdown.
+   - **Interactive 5-Year Ocular Health Projection Simulator**: Interactive digital eye twin modeling Meibomian gland ductal atrophy %, tear break-up time (TBUT), and ciliary spasm risk with unmitigated vs. mitigated trajectories.
+
+6. **Longitudinal Habit Diary & Altair Analytics**
    - Daily logging of screen hours, sleep duration, micro-breaks, and discomfort scores.
    - Visual Wellness Composite Index (0–100) and multi-metric KPI tracking.
    - Interactive Altair charts: habit exposure timeline, rolling trends, and screen-time vs symptom severity regression scatter plots.
    - CSV export and historical CSV import with schema validation.
 
-6. **20-20-20 Smart Break Timer with Audio Chimes**
+7. **20-20-20 Smart Break Timer with AI Adaptive Pacing & Audio Chimes**
+   - **Smart Biometric Adaptive Pacing**: Dynamically adjusts focus/break cycles (15m/5m, 20m/3m, 25m/5m) based on real-time fatigue telemetry.
    - Ophthalmic interval presets: Standard 20-20-20, Pomodoro Classic (25/5), Deep Focus (50/10), and Custom.
+   - **Strict Focus Interlock**: Locks break controls to prevent skipping ocular rest periods.
    - Large clinical digital display with visual pulsing animation during active sessions.
-   - Native Web Audio API synthetic bell chimes on interval completion (no external audio files required).
+   - Native Web Audio API synthetic bell chimes and 432 Hz alpha relaxation tones.
    - Guided 4-step micro-break exercises: 20-Foot Gaze, Conscious Blinking, Warm Palming, and Cervical Decompression.
 
-7. **Ophthalmic Eye Relaxation Studio & Vision Gym**
+8. **Ophthalmic Eye Relaxation Studio & Vision Gym**
    - Interactive guided exercise studio with animated visual tracking coaches.
    - **Figure-8 Smooth Pursuit**: Animated SVG infinity loop to decompress extraocular muscles.
    - **Meibomian Blink & Squeeze**: 4-phase rhythm drill to express corneal lipid oils.
@@ -54,7 +62,9 @@ The platform is investigational and educational. It does not replace formal exam
    - **Thermal Warm Palming & Compass Gaze Stretches**: Complete retinal photoreceptor rest.
    - Daily exercise completion tracker with reward chimes.
 
-8. **Care Guide & Clinical Research Telemetry**
+9. **Care Guide, Disease Vulnerability & Nutritional Ophthalmology**
+   - Stratifies risk across 5 primary ocular pathologies (MGD, Ciliary Spasm, Keratitis, Handheld Convergence, Circadian Phototoxicity).
+   - Targeted nutritional protocols (Omega-3, Lutein/Zeaxanthin, Hydration, Bioflavonoids).
    - Comprehensive ergonomic setup rules, display calibration tips, and peer-reviewed ophthalmic citations.
    - Interactive Workstation Ergonomic Readiness Audit (0–100%).
    - Urgent Ophthalmic Warning red flag protocol for symptoms requiring immediate medical evaluation.
@@ -92,7 +102,7 @@ Eye-Risk/
 │   ├── recommendations.py          # Evidence-based clinical action plan engine
 │   ├── sound_alerts.py             # Web Audio API synthetic notification chimes
 │   ├── eye_exercises.py            # Ophthalmic relaxation exercises & animated visual coach
-│   ├── gamification.py             # OcuCoins credit economy & strict rehabilitation protocol
+│   ├── gamification.py             # AsthenoCredits credit economy & strict rehabilitation protocol
 │   ├── analytics.py                # Altair visualizations, KPIs & cohort percentiles
 │   ├── report_generator.py         # Printable clinical summary HTML/PDF generator
 │   ├── blink_monitor.py            # MediaPipe real-time blink detection & EAR calculation

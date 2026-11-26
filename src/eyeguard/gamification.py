@@ -1,6 +1,6 @@
-"""AsthenoZero - Gamification, OcuCoins Credit Economy & Streak Protocol.
+"""AsthenoZero - Gamification, AsthenoCredits Credit Economy & Streak Protocol.
 
-Manages user habit streaks, OcuCoins credits, streak shields, and the
+Manages user habit streaks, AsthenoCredits credits, streak shields, and the
 Strict Clinical Ocular Rehabilitation Protocol enforced when credits are depleted.
 """
 
@@ -23,7 +23,7 @@ COST_BUY_SHIELD = 40
 
 def ensure_gamification_state() -> None:
     """Initializes gamification session state keys if not already present."""
-    st.session_state.setdefault("ocu_coins", 100)
+    st.session_state.setdefault("astheno_credits", 100)
     st.session_state.setdefault("daily_streak", 3)
     st.session_state.setdefault("streak_shields", 1)
     st.session_state.setdefault("streak_broken", False)
@@ -41,20 +41,20 @@ def ensure_gamification_state() -> None:
 
 
 def award_coins(amount: int, reason: str) -> None:
-    """Awards OcuCoins, logs the transaction, and triggers a visual notification."""
+    """Awards AsthenoCredits, logs the transaction, and triggers a visual notification."""
     ensure_gamification_state()
-    st.session_state["ocu_coins"] = st.session_state.get("ocu_coins", 100) + amount
+    st.session_state["astheno_credits"] = st.session_state.get("astheno_credits", 100) + amount
     st.session_state["coins_earned_today"] = st.session_state.get("coins_earned_today", 0) + amount
-    st.toast(f"🪙 +{amount} OcuCoins earned! ({reason})", icon="🪙")
+    st.toast(f"🪙 +{amount} AsthenoCredits earned! ({reason})", icon="🪙")
 
 
 def spend_coins(amount: int, reason: str) -> bool:
-    """Attempts to deduct OcuCoins. Returns True if successful, False if insufficient balance."""
+    """Attempts to deduct AsthenoCredits. Returns True if successful, False if insufficient balance."""
     ensure_gamification_state()
-    current = st.session_state.get("ocu_coins", 0)
+    current = st.session_state.get("astheno_credits", 0)
     if current >= amount:
-        st.session_state["ocu_coins"] = current - amount
-        st.toast(f"Spent {amount} OcuCoins for: {reason}", icon="🪙")
+        st.session_state["astheno_credits"] = current - amount
+        st.toast(f"Spent {amount} AsthenoCredits for: {reason}", icon="🪙")
         return True
     return False
 
@@ -69,7 +69,7 @@ def break_streak_simulation() -> None:
         return
 
     st.session_state["streak_broken"] = True
-    coins = st.session_state.get("ocu_coins", 0)
+    coins = st.session_state.get("astheno_credits", 0)
     if coins < COST_REPAIR_STREAK:
         st.session_state["strict_rehab_mode"] = True
         st.session_state["strict_rehab_tasks"] = {
@@ -77,9 +77,9 @@ def break_streak_simulation() -> None:
             "timer": False,
             "diagnostic": False,
         }
-        st.toast("🚨 Insufficient OcuCoins! Strict Rehabilitation Mode engaged.", icon="⚠️")
+        st.toast("🚨 Insufficient AsthenoCredits! Strict Rehabilitation Mode engaged.", icon="⚠️")
     else:
-        st.toast("⚠️ Streak broken! Use your OcuCoins vault to repair it.", icon="⚠️")
+        st.toast("⚠️ Streak broken! Use your AsthenoCredits vault to repair it.", icon="⚠️")
 
 
 def repair_streak_with_coins() -> bool:
@@ -90,7 +90,7 @@ def repair_streak_with_coins() -> bool:
         st.session_state["strict_rehab_mode"] = False
         st.toast("✅ Streak successfully repaired and restored!", icon="🔥")
         return True
-    st.error("❌ Insufficient OcuCoins to repair streak! You must complete the Strict Rehabilitation Challenge.")
+    st.error("❌ Insufficient AsthenoCredits to repair streak! You must complete the Strict Rehabilitation Challenge.")
     return False
 
 
@@ -101,7 +101,7 @@ def buy_shield() -> bool:
         st.session_state["streak_shields"] = st.session_state.get("streak_shields", 0) + 1
         st.toast("🛡️ Streak Shield purchased! Active in vault.", icon="🛡️")
         return True
-    st.error("❌ Insufficient OcuCoins (Requires 40 🪙). Earn more coins by completing exercises and timers!")
+    st.error("❌ Insufficient AsthenoCredits (Requires 40 🪙). Earn more coins by completing exercises and timers!")
     return False
 
 
@@ -138,14 +138,14 @@ def notify_activity_completed(activity_type: str) -> None:
             st.balloons()
             st.success(
                 "🎉 **STRICT REHABILITATION COMPLETE!** You fulfilled all clinical ocular recovery protocols. "
-                "Your streak has been fully restored and +60 OcuCoins have been added to your vault!"
+                "Your streak has been fully restored and +60 AsthenoCredits have been added to your vault!"
             )
 
 
 def render_top_navbar_badges() -> str:
     """Generates HTML snippet for live Streak & Coin badges in the hero banner."""
     ensure_gamification_state()
-    coins = st.session_state.get("ocu_coins", 0)
+    coins = st.session_state.get("astheno_credits", 0)
     streak = st.session_state.get("daily_streak", 0)
     shields = st.session_state.get("streak_shields", 0)
     broken = st.session_state.get("streak_broken", False)
@@ -159,7 +159,7 @@ def render_top_navbar_badges() -> str:
         streak_badge = f'<span class="telemetry-pill active-cyan" style="font-weight:800;">🔥 Streak: {streak} Days</span>'
 
     shield_badge = f'<span class="telemetry-pill" style="border-color:#38BDF8; color:#7DD3FC;">🛡️ Shields: {shields}</span>'
-    coin_badge = f'<span class="telemetry-pill active-emerald" style="font-weight:800; border-color:#10B981;">🪙 {coins} OcuCoins</span>'
+    coin_badge = f'<span class="telemetry-pill active-emerald" style="font-weight:800; border-color:#10B981;">🪙 {coins} AsthenoCredits</span>'
 
     return f"{streak_badge} {coin_badge} {shield_badge}"
 
@@ -171,7 +171,7 @@ def render_strict_rehab_alert() -> None:
         return
 
     is_strict = st.session_state.get("strict_rehab_mode", False)
-    coins = st.session_state.get("ocu_coins", 0)
+    coins = st.session_state.get("astheno_credits", 0)
 
     if is_strict or coins < COST_REPAIR_STREAK:
         tasks = st.session_state.get("strict_rehab_tasks", {})
@@ -187,7 +187,7 @@ def render_strict_rehab_alert() -> None:
             🚨 STRICT CLINICAL REHABILITATION PROTOCOL ACTIVE
         </div>
         <div style="font-size:0.88rem; color:#E2E8F0; margin-top:4px; max-width:800px; line-height:1.6;">
-            Your daily streak has lapsed and you have depleted your OcuCoins vault ({coins} coins remaining).
+            Your daily streak has lapsed and you have depleted your AsthenoCredits vault ({coins} coins remaining).
             Under clinical protocol, you cannot purchase a recovery bypass. To unfreeze and restore your 
             <strong>{st.session_state.get('daily_streak', 1)}-Day Streak</strong>, you must complete all 3 therapeutic recovery tasks:
         </div>
@@ -220,7 +220,7 @@ def render_strict_rehab_alert() -> None:
     <div>
         <div style="font-size:1.15rem; font-weight:800; color:#FDE68A;">⚠️ DAILY STREAK AT RISK</div>
         <div style="font-size:0.88rem; color:#E2E8F0; margin-top:4px;">
-            Your streak was broken! You can spend <strong>50 OcuCoins</strong> from your vault ({coins} available) to repair and protect your streak.
+            Your streak was broken! You can spend <strong>50 AsthenoCredits</strong> from your vault ({coins} available) to repair and protect your streak.
         </div>
     </div>
 </div>
@@ -228,7 +228,7 @@ def render_strict_rehab_alert() -> None:
         )
         col_rep1, col_rep2 = st.columns([1, 2])
         with col_rep1:
-            if st.button("🪙 Repair Streak (Cost: 50 OcuCoins)", type="primary", use_container_width=True):
+            if st.button("🪙 Repair Streak (Cost: 50 AsthenoCredits)", type="primary", use_container_width=True):
                 repair_streak_with_coins()
                 st.rerun()
 
@@ -236,18 +236,18 @@ def render_strict_rehab_alert() -> None:
 def render_gamification_sidebar() -> None:
     """Renders the Credit & Streak Vault in the sidebar."""
     ensure_gamification_state()
-    coins = st.session_state.get("ocu_coins", 0)
+    coins = st.session_state.get("astheno_credits", 0)
     streak = st.session_state.get("daily_streak", 0)
     shields = st.session_state.get("streak_shields", 0)
     broken = st.session_state.get("streak_broken", False)
     is_strict = st.session_state.get("strict_rehab_mode", False)
 
-    st.markdown("### 🏆 Streak & OcuCoins Vault")
+    st.markdown("### 🏆 Streak & AsthenoCredits Vault")
 
     st.html(
         f"""<div class="clinical-card" style="padding:14px 16px !important; margin-bottom:12px !important; border-left: 4px solid #10B981 !important;">
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-    <span style="font-size:0.85rem; font-weight:700; color:#94A3B8;">OcuCoins Balance:</span>
+    <span style="font-size:0.85rem; font-weight:700; color:#94A3B8;">AsthenoCredits Balance:</span>
     <span style="font-size:1.15rem; font-weight:800; color:#10B981;">🪙 {coins}</span>
 </div>
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -263,7 +263,7 @@ def render_gamification_sidebar() -> None:
 
     with st.expander("🪙 Credit Economy & Vault Actions", expanded=broken or is_strict):
         st.markdown(
-            """**Earn OcuCoins:**
+            """**Earn AsthenoCredits:**
 - 📝 Log Daily Habit Diary: `+15 🪙`
 - 🧘 Vision Gym Exercise: `+25 🪙`
 - ⏱️ 20-20-20 Break Timer: `+20 🪙`
@@ -293,8 +293,8 @@ def render_gamification_sidebar() -> None:
                 st.rerun()
         with test_col2:
             if st.button("Drain Coins (Test 0 🪙)", help="Sets coins to 0 to test strict challenge", use_container_width=True):
-                st.session_state["ocu_coins"] = 0
+                st.session_state["astheno_credits"] = 0
                 st.session_state["streak_broken"] = True
                 st.session_state["strict_rehab_mode"] = True
-                st.toast("OcuCoins set to 0. Strict Rehabilitation mode engaged!", icon="⚠️")
+                st.toast("AsthenoCredits set to 0. Strict Rehabilitation mode engaged!", icon="⚠️")
                 st.rerun()

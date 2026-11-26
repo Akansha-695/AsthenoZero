@@ -15,6 +15,8 @@ from eyeguard.report_generator import generate_clinical_html_report
 from eyeguard.clinical_pathology import (
     get_vulnerable_conditions,
     get_ophthalmic_dietary_protocol,
+    calculate_divergence_index,
+    simulate_5year_ocular_projection,
 )
 from eyeguard.eye_exercises import (
     EYE_EXERCISES,
@@ -50,6 +52,8 @@ __all__ = [
     "generate_clinical_html_report",
     "get_vulnerable_conditions",
     "get_ophthalmic_dietary_protocol",
+    "calculate_divergence_index",
+    "simulate_5year_ocular_projection",
     "EYE_EXERCISES",
     "render_figure_eight_animation",
     "render_blink_squeeze_animation",

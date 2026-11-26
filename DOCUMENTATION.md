@@ -13,7 +13,7 @@
 
 **AsthenoZero** is a closed-loop, non-invasive digital health platform engineered to quantify, monitor, and mitigate **Digital Eye Strain (Asthenopia)** and Computer Vision Syndrome (CVS). 
 
-By uniting **machine learning predictive risk modeling**, **real-time privacy-preserving computer vision blink kinematics**, an **enforceable habit economy (OcuCoins & Strict Rehabilitation Protocol)**, and **nutritional ophthalmology prescriptions**, AsthenoZero transitions digital ocular care from passive symptomatic treatment to active, preventative ergonomics.
+By uniting **machine learning predictive risk modeling**, **real-time privacy-preserving computer vision blink kinematics**, an **enforceable habit economy (AsthenoCredits & Strict Rehabilitation Protocol)**, and **nutritional ophthalmology prescriptions**, AsthenoZero transitions digital ocular care from passive symptomatic treatment to active, preventative ergonomics.
 
 ---
 
@@ -67,7 +67,7 @@ flowchart TD
     end
 
     subgraph ECON["4. Behavioral Economics & Strict Recovery"]
-        D1["OcuCoins Credit Economy"] --> D2["Daily Habit Streak Engine"]
+        D1["AsthenoCredits Credit Economy"] --> D2["Daily Habit Streak Engine"]
         D2 --> D3{"Streak Broken & Coins Depleted (0)?"}
         D3 -- "Yes" --> D4["Strict Clinical Rehabilitation Protocol (Physiological Lock)"]
         D4 --> D5["Complete Exercise + Optical Reset + Blink Test"]
@@ -75,7 +75,7 @@ flowchart TD
     end
 
     subgraph NUTR["5. Clinical Pathology & Nutritional Ophthalmology"]
-        E1["Ergonomic Inputs"] --> E2["5 Ocular Condition Vulnerabilities (MGD, Spasm, Keratitis)"]
+        E1["Ergonomic Inputs"] --> E2["5 Eye Condition Vulnerabilities (MGD, Spasm, Keratitis)"]
         E2 --> E3["Targeted Dietary Prescriptions (Omega-3, Lutein, Hydration)"]
         E3 --> E4["One-Click Exportable HTML/PDF Clinical Report"]
     end
@@ -144,27 +144,50 @@ Permutation feature importance quantifies model reliance by shuffling each colum
   * 60-second uninterrupted alphanumeric reading test.
   * Direct comparison of observed blink frequency against normal physiological standards ($\ge 14$ blinks/min vs $<8$ blinks/min severe suppression).
 
+### 5.4 Incomplete vs. Complete Blink Ratio & Meibomian Gland Pump Efficiency
+* **Clinical Significance:** In evaporative dry eye disease, it is not merely blink quantity that matters, but *blink completeness*. Partial/micro-blinks fail to bring the upper and lower eyelid margins into apposition, leaving the lower corneal surface exposed and failing to mechanically compress the tarsal Meibomian glands.
+* **Algorithm:** AsthenoZero tracks minimum Eye Aspect Ratio ($EAR_{min}$) per blink event. Blinks where $EAR_{min} < 0.70 \times \text{threshold}$ are classified as **Complete Blinks**, while shallow dips are classified as **Incomplete Blinks**.
+* **Meibomian Pump Efficiency Formula:**
+  $$\text{Pump Efficiency (\%)} = \left(\frac{\text{Complete Blinks}}{\text{Total Blinks}}\right) \times 100$$
+  Efficiencies $< 65\%$ trigger targeted 4-phase squeeze exercise interventions.
+
+### 5.5 Real-Time Ergonomic Screen Distance & Postural Slouch Telemetry
+* **Clinical Problem:** Continuous near-point screen proximity ($< 18$ inches) forces excessive ciliary muscle accommodation and medial convergence, while neck forward-head tilt increases cervical strain.
+* **Algorithm:** Measures outer canthal distance (inter-canthal pixel distance between MediaPipe landmarks 33 and 263) calibrated against an anatomical adult baseline ($9.5\text{ cm}$).
+* **Stratification:**
+  * **Optimal Posture ($20\text{--}28\text{ in}$):** Physiological optical comfort.
+  * **Warning: Screen Proximity ($< 18\text{ in}$):** High risk of accommodative spasm and near-point convergence stress.
+  * **Distant ($> 30\text{ in}$):** Potential squinting or small font fatigue.
+
+### 5.6 Ambient Room Lighting (Lux Proxy) & Display Contrast Stress Analyzer
+* **Clinical Problem:** Working on a bright luminous display in a dark room causes pupil diameter fluctuation and severe retinal contrast stress.
+* **Algorithm:** Samples peripheral non-face corner pixels from the video stream and computes relative luminance $Y = 0.299R + 0.587G + 0.114B$.
+* **Classification:**
+  * **Optimal Ambient:** $Y \in [70, 190]$ (balanced contrast).
+  * **Glare / Excessive:** $Y > 190$ (specular reflection risk).
+  * **Dim Room / Contrast Stress:** $Y < 70$ (pupillary oscillation stress).
+
 ---
 
-## 6. Behavioral Economics: OcuCoins & Strict Rehabilitation Protocol
+## 6. Behavioral Economics: AsthenoCredits & Strict Rehabilitation Protocol
 
 Unlike consumer habit apps that allow streak rescues via ad views or simple payments, AsthenoZero introduces a **physiologically-gated digital habit enforcement economy**:
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                   OCUCOINS CREDIT ECONOMY                        │
+│                 ASTHENOCREDITS CREDIT ECONOMY                 │
 ├───────────────────────────────┬──────────────────────────────────┤
 │ ACTION / BEHAVIOR             │ REWARD / COST                    │
 ├───────────────────────────────┼──────────────────────────────────┤
-│ Log Daily Habit Diary         │ +15 🪙 OcuCoins                   │
-│ Complete 20-20-20 Micro-Break │ +20 🪙 OcuCoins                   │
-│ Complete Vision Gym Exercise  │ +25 🪙 OcuCoins                   │
-│ Complete 60s Blink Diagnostic │ +35 🪙 OcuCoins                   │
-│ Daily Streak Maintenance      │ +10 🪙 OcuCoins / day             │
-│ Strict Rehab Graduation Bonus │ +60 🪙 OcuCoins                   │
+│ Log Daily Habit Diary         │ +15 🪙 AsthenoCredits                   │
+│ Complete 20-20-20 Micro-Break │ +20 🪙 AsthenoCredits                   │
+│ Complete Vision Gym Exercise  │ +25 🪙 AsthenoCredits                   │
+│ Complete 60s Blink Diagnostic │ +35 🪙 AsthenoCredits                   │
+│ Daily Streak Maintenance      │ +10 🪙 AsthenoCredits / day             │
+│ Strict Rehab Graduation Bonus │ +60 🪙 AsthenoCredits                   │
 ├───────────────────────────────┼──────────────────────────────────┤
-│ Buy Streak Shield (Vault)     │ -40 🪙 OcuCoins                   │
-│ Repair Broken Streak          │ -50 🪙 OcuCoins                   │
+│ Buy Streak Shield (Vault)     │ -40 🪙 AsthenoCredits                   │
+│ Repair Broken Streak          │ -50 🪙 AsthenoCredits                   │
 └───────────────────────────────┴──────────────────────────────────┘
 ```
 
@@ -222,6 +245,25 @@ Evidence-based dietary prescriptions supported by AREDS 2 and TFOS DEWS II clini
 * **Systemic Osmotic Hydration Protocol (2.5–3.0 L/day):** Mineral water with electrolytes (prevents hyperosmolar tear film breakdown).
 * **Magnesium Glycinate & Tart Cherry:** For low-sleep profiles (enhances nocturnal epithelial mitotic repair).
 
+### 8.3 Subjective-Objective Asthenopia Divergence Index (SO-DI / Silent Asthenopia)
+* **The Clinical Phenomenon:** Software engineers, analysts, and students often adapt cognitively to ocular strain, under-reporting subjective discomfort while their objective blink mechanics deteriorate catastrophically.
+* **The SO-DI Metric:**
+  $$\Delta_{\text{Divergence}} = \text{Norm}(\text{Subjective Score}) - \text{Norm}(\text{Objective Frequency \& Pump Efficiency})$$
+* **Silent Asthenopia Detection:** When subjective score is low ($< 40$) but blink rate is severely suppressed ($< 8$ blinks/min or pump efficiency $< 50\%$), SO-DI flags **"Silent Asthenopia"**—preventing irreversible meibomian dropout before the patient feels pain.
+
+### 8.4 Interactive 5-Year Ocular Health Projection Simulator (Digital Eye Twin)
+* **Digital Eye Twin Modeling:** Simulates long-term physiological trajectory over a 1 to 5 year horizon:
+  * **Meibomian Duct Atrophy:** Compound risk of ductal dropout as a function of daily unmitigated screen hours.
+  * **Tear Break-Up Time (TBUT):** Progression from physiological norms ($\ge 10\text{s}$) toward severe evaporative dry eye ($< 4\text{s}$).
+  * **Ciliary Tonic Spasm Index:** Progressive loss of accommodative amplitude from sustained near-point fixation.
+* **Mitigation Modeling:** Demonstrates quantitative contrast between the unmitigated trajectory and the protective trajectory achieved with AsthenoZero habit pacing and physical therapy.
+
+### 8.5 Smart Biometric Adaptive Break Pacing Engine
+* **Dynamic Interval Cadence:** Replaces rigid one-size-fits-all timers with an algorithmically adjusted cadence based on real-time asthenopia score and cumulative screen exposure:
+  * **Intensive Corneal Recovery:** 15m focus / 5m rest (for severe fatigue scores $\ge 60$).
+  * **Standard Micro-Pacing:** 20m focus / 3m rest (for moderate fatigue scores $35\text{--}59$).
+  * **Sustained Focus & Preventative:** 25m focus / 5m rest (for low baseline fatigue $< 35$).
+
 ---
 
 ## 9. Comprehensive File & Module Architecture
@@ -245,7 +287,7 @@ Eye-Risk/
 ├── src/eyeguard/
 │   ├── __init__.py                 # Public package exports
 │   ├── theme.py                    # Obsidian dark mode CSS & SVG risk gauge generator
-│   ├── gamification.py             # OcuCoins credit economy & strict rehabilitation protocol
+│   ├── gamification.py             # AsthenoCredits credit economy & strict rehabilitation protocol
 │   ├── clinical_pathology.py       # Disease vulnerability engine & nutritional ophthalmology
 │   ├── recommendations.py          # Evidence-based clinical action plan engine
 │   ├── report_generator.py         # Printable clinical summary HTML/PDF report generator

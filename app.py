@@ -33,6 +33,8 @@ from eyeguard.care_content import CARE_SECTIONS, CARE_SOURCES, URGENT_GUIDANCE  
 from eyeguard.clinical_pathology import (  # noqa: E402
     get_vulnerable_conditions,
     get_ophthalmic_dietary_protocol,
+    calculate_divergence_index,
+    simulate_5year_ocular_projection,
 )
 from eyeguard.eye_exercises import (  # noqa: E402
     EYE_EXERCISES,
@@ -483,9 +485,9 @@ Percentile rankings calibrated against N=139 clinical research survey participan
 </div>"""
             )
 
-        # Potential Ocular Conditions & Disease Vulnerability
+        # Potential Eye Conditions & Disease Risks
         st.markdown("---")
-        st.markdown("#### 🩺 Potential Ocular Conditions & Disease Vulnerability")
+        st.markdown("#### 🩺 Potential Eye Conditions & Disease Risks")
         st.caption("Stratification of specific ocular surface and refractive conditions you are vulnerable to based on your telemetry:")
         vulnerable_conditions = get_vulnerable_conditions(habit_dict, score)
         
@@ -514,7 +516,7 @@ Percentile rankings calibrated against N=139 clinical research survey participan
 
         # Targeted Ophthalmic Nutritional & Dietary Protocol
         st.markdown("---")
-        st.markdown("#### 🥗 Targeted Ocular Nutrition & Dietary Protocol")
+        st.markdown("#### 🥗 Targeted Eye Nutrition & Dietary Protocol")
         st.caption("Nutritional ophthalmology interventions scientifically proven to optimize tear film stability and ciliary muscle recovery:")
         diet_plan = get_ophthalmic_dietary_protocol(habit_dict, score)
         
@@ -533,6 +535,80 @@ Percentile rankings calibrated against N=139 clinical research survey participan
 </div>"""
                 )
 
+        # Subjective-Objective Divergence Index (Silent Asthenopia Detector)
+        st.markdown("---")
+        st.markdown("#### 🔬 Subjective-Objective Divergence Index (Silent Asthenopia Detector)")
+        st.caption("Cross-correlates your self-reported questionnaire symptoms against objective webcam blink kinematics to detect asymptomatic dry eye:")
+
+        blink_rep = st.session_state.get("last_blink_report")
+        blink_rate_val = blink_rep.get("blink_rate") if blink_rep else None
+        pump_eff_val = blink_rep.get("meibomian_pump_efficiency") if blink_rep else None
+        divergence = calculate_divergence_index(score, blink_rate_val, pump_eff_val)
+
+        if divergence["has_camera_data"]:
+            st.html(
+                f"""<div class="clinical-card" style="border-left: 4px solid {divergence['badge_color']} !important;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px;">
+    <strong style="font-size:1.05rem; color:#F8FAFC;">Diagnostic Divergence Quadrant</strong>
+    <span style="font-size:0.75rem; font-weight:800; color:{divergence['badge_color']}; text-transform:uppercase; background:rgba(0,0,0,0.3); padding:3px 10px; border-radius:4px; border:1px solid {divergence['badge_color']};">{divergence['quadrant']}</span>
+</div>
+<div style="font-size:0.88rem; color:#CBD5E1; line-height:1.55; margin-bottom:12px;">{divergence['interpretation']}</div>
+<div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; background:rgba(0,0,0,0.25); padding:10px 14px; border-radius:8px; font-size:0.82rem;">
+    <div><span style="color:#94A3B8;">Self-Reported Fatigue:</span> <strong style="color:#F8FAFC;">{divergence['subjective_pct']:.0f}%</strong></div>
+    <div><span style="color:#94A3B8;">Objective Blink Inhibition:</span> <strong style="color:#F8FAFC;">{divergence['objective_pct']:.0f}%</strong></div>
+    <div><span style="color:#94A3B8;">Divergence Delta:</span> <strong style="color:{divergence['badge_color']};">{divergence['divergence_score']:+.1f}%</strong></div>
+</div>
+</div>"""
+            )
+        else:
+            st.html(
+                """<div class="clinical-card" style="border-left: 4px solid #38BDF8 !important;">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <strong style="color:#F8FAFC; font-size:1rem;">📡 Webcam Biometric Validation Pending</strong>
+    <span style="font-size:0.72rem; font-weight:700; color:#38BDF8; background:rgba(6,182,212,0.15); padding:2px 8px; border-radius:4px;">Action Required</span>
+</div>
+<div style="font-size:0.85rem; color:#94A3B8; line-height:1.5;">
+Complete the <strong>60-Second Live Blink Diagnostic</strong> in Tab 2 to unlock your Subjective-Objective Divergence Index and detect whether your cornea is experiencing silent, unperceived tear film evaporation.
+</div>
+</div>"""
+            )
+
+        # 5-Year Ocular Health Simulator (Digital Eye Twin)
+        st.markdown("---")
+        st.markdown("#### 🔮 5-Year Ocular Health Projection Simulator (Digital Eye Twin)")
+        st.caption("Interactive biophysical projection of how your Meibomian glands, Tear Break-Up Time (TBUT), and ciliary focus will age under your current habits:")
+
+        screen_hours_val = 8.5 if "More than 8" in habit_dict["screen_time_category"] else (7.0 if "6-8" in habit_dict["screen_time_category"] else 5.0)
+        breaks_val = 0 if habit_dict["breaks_per_hour_category"] == "0" else (1 if "1-2" in habit_dict["breaks_per_hour_category"] else 3)
+        sim_years = st.slider("Select Horizon for Habit Simulation", min_value=1, max_value=5, value=3, step=1, format="%d Years")
+        sim_result = simulate_5year_ocular_projection(screen_hours_val, breaks_val, sim_years)
+
+        s_col1, s_col2 = st.columns(2)
+        with s_col1:
+            st.html(
+                f"""<div class="clinical-card" style="border-left: 4px solid {sim_result['status_color']} !important; height:100%;">
+<div style="font-size:0.75rem; font-weight:800; color:{sim_result['status_color']}; text-transform:uppercase;">Unmitigated Habit Trajectory ({sim_years} Yrs)</div>
+<div style="font-size:1.1rem; font-weight:800; color:#F8FAFC; margin:4px 0;">{sim_result['gland_status']}</div>
+<div style="font-size:0.85rem; color:#CBD5E1; line-height:1.6; margin-top:8px;">
+<div>&bull; <strong style="color:#EF4444;">Meibomian Gland Atrophy:</strong> {sim_result['unmitigated_atrophy_pct']}% duct drop-out</div>
+<div>&bull; <strong style="color:#EF4444;">Tear Break-Up Time (TBUT):</strong> {sim_result['unmitigated_tbut_seconds']}s (Normal: &gt;10s)</div>
+<div>&bull; <strong style="color:#EF4444;">Ciliary Spasm Burden:</strong> {sim_result['ciliary_spasm_index']}/100</div>
+</div>
+</div>"""
+            )
+        with s_col2:
+            st.html(
+                f"""<div class="clinical-card" style="border-left: 4px solid #10B981 !important; height:100%;">
+<div style="font-size:0.75rem; font-weight:800; color:#10B981; text-transform:uppercase;">With AsthenoZero Ergonomic Care</div>
+<div style="font-size:1.1rem; font-weight:800; color:#F8FAFC; margin:4px 0;">Preserved Ocular Surface Homeostasis</div>
+<div style="font-size:0.85rem; color:#CBD5E1; line-height:1.6; margin-top:8px;">
+<div>&bull; <strong style="color:#34D399;">Meibomian Gland Atrophy:</strong> &lt; {sim_result['mitigated_atrophy_pct']}% (Negligible duct loss)</div>
+<div>&bull; <strong style="color:#34D399;">Tear Break-Up Time (TBUT):</strong> {sim_result['mitigated_tbut_seconds']}s (Full precorneal lipid stability)</div>
+<div>&bull; <strong style="color:#34D399;">Ciliary Spasm Burden:</strong> {sim_result['mitigated_ciliary_index']}/100 (Fluid optical accommodation)</div>
+</div>
+</div>"""
+            )
+
 
 def _render_blink_status(monitor: BlinkMonitor) -> None:
     @st.fragment(run_every=1)
@@ -548,9 +624,11 @@ def _render_blink_status(monitor: BlinkMonitor) -> None:
         elif phase == "reading":
             st.info("📖 Standardized reading in progress. Read comfortably; blink naturally.")
             st.progress(snapshot["progress"], text=f"Diagnostic Test: {snapshot['seconds_remaining']} sec remaining")
-            col_b1, col_b2 = st.columns(2)
+            col_b1, col_b2, col_b3, col_b4 = st.columns(4)
             col_b1.metric("Blinks Detected", snapshot["blink_count"])
-            col_b2.metric("Elapsed Time", f"{60 - snapshot['seconds_remaining']}s / 60s")
+            col_b2.metric("Complete / Partial", f"{snapshot.get('complete_blinks', 0)} / {snapshot.get('incomplete_blinks', 0)}")
+            col_b3.metric("Screen Distance", f"{snapshot.get('distance_inches', 22.0)} in")
+            col_b4.metric("Ambient Lux", f"{snapshot.get('ambient_lux_proxy', 110):.0f} Lux")
         elif phase == "complete":
             st.success("✅ Standardized 60-second reading diagnostic complete.")
             if snapshot["blink_rate"] is None:
@@ -563,9 +641,9 @@ def _render_blink_status(monitor: BlinkMonitor) -> None:
                 m1, m2, m3, m4 = st.columns(4)
                 rate = snapshot["blink_rate"]
                 m1.metric("Blink Frequency", f"{rate:.1f} / min", delta="Resting: 15-20" if rate >= 15 else "Reduced", delta_color="normal" if rate >= 15 else "inverse")
-                m2.metric("Blinks Counted", snapshot["blink_count"])
-                m3.metric("Tracking Coverage", f"{snapshot['coverage_percent']:.0f}%")
-                m4.metric("Signal Quality", snapshot["quality"])
+                m2.metric("Meibomian Efficiency", f"{snapshot.get('meibomian_pump_efficiency', 100.0):.0f}%", help="Percentage of complete blinks that pump tear lipid oils across cornea")
+                m3.metric("Screen Distance", f"{snapshot.get('distance_inches', 22.0)} in", delta=snapshot.get("posture_tier", "Optimal"), delta_color="normal" if snapshot.get("posture_tier") == "Optimal" else "inverse")
+                m4.metric("Ambient Lux & Contrast", f"{snapshot.get('ambient_lux_proxy', 110):.0f} Lux", delta=f"{snapshot.get('contrast_stress', 'Optimal')} Stress", delta_color="normal" if snapshot.get('contrast_stress') == 'Optimal' else "inverse")
 
                 if rate < 8:
                     clinical_badge = "<span class='status-pill-badge badge-high'>● Severe Blink Inhibition (&lt; 8/min)</span>"
@@ -591,6 +669,33 @@ def _render_blink_status(monitor: BlinkMonitor) -> None:
 <div style="font-size: 0.9rem; color: #E2E8F0; line-height: 1.6;">{clinical_text}</div>
 </div>"""
                 )
+
+                # Diagnostic Biometric Cards
+                b_col1, b_col2, b_col3 = st.columns(3)
+                with b_col1:
+                    st.html(
+                        f"""<div class="clinical-card" style="border-left: 4px solid {'#10B981' if snapshot.get('meibomian_pump_efficiency', 100) >= 70 else '#F59E0B'} !important; height:100%;">
+<div style="font-size:0.75rem; font-weight:800; color:#38BDF8; text-transform:uppercase;">Meibomian Oil Pump</div>
+<div style="font-size:1.15rem; font-weight:800; color:#F8FAFC; margin:4px 0;">{snapshot.get('complete_blinks', 0)} Complete &bull; {snapshot.get('incomplete_blinks', 0)} Partial</div>
+<div style="font-size:0.82rem; color:#94A3B8; line-height:1.4;">Incomplete blinks leave the inferior cornea un-lubricated. Practice 4-phase squeeze drills to restore lipid flow.</div>
+</div>"""
+                    )
+                with b_col2:
+                    st.html(
+                        f"""<div class="clinical-card" style="border-left: 4px solid {'#10B981' if snapshot.get('posture_tier') == 'Optimal' else '#EF4444'} !important; height:100%;">
+<div style="font-size:0.75rem; font-weight:800; color:#38BDF8; text-transform:uppercase;">Ergonomic Distance & Neck</div>
+<div style="font-size:1.05rem; font-weight:800; color:#F8FAFC; margin:4px 0;">{snapshot.get('distance_inches', 22.0)} in ({snapshot.get('posture_tier', 'Optimal')})</div>
+<div style="font-size:0.82rem; color:#94A3B8; line-height:1.4;">{snapshot.get('posture_status', '')}</div>
+</div>"""
+                    )
+                with b_col3:
+                    st.html(
+                        f"""<div class="clinical-card" style="border-left: 4px solid {'#10B981' if snapshot.get('contrast_stress') == 'Optimal' else '#F59E0B'} !important; height:100%;">
+<div style="font-size:0.75rem; font-weight:800; color:#38BDF8; text-transform:uppercase;">Ambient Light & Contrast</div>
+<div style="font-size:1.05rem; font-weight:800; color:#F8FAFC; margin:4px 0;">~{snapshot.get('ambient_lux_proxy', 110):.0f} Lux &bull; {snapshot.get('contrast_stress', 'Optimal')} Stress</div>
+<div style="font-size:0.82rem; color:#94A3B8; line-height:1.4;">{snapshot.get('ambient_status', '')}</div>
+</div>"""
+                    )
                 if st.session_state.get("last_blink_report") != snapshot:
                     st.session_state["last_blink_report"] = snapshot
                     notify_activity_completed("diagnostic")
@@ -864,8 +969,8 @@ def _render_habit_diary() -> None:
 </div>"""
         )
 
-    # Regain-Style Asthenopia Screen Exposure Budgeting
-    with st.expander("🎯 Regain-Style Daily Screen Exposure Budget & Overuse Shield", expanded=False):
+    # AsthenoZero Daily Screen Exposure Budgeting
+    with st.expander("🎯 AsthenoZero Daily Screen Exposure Budget & Overuse Shield", expanded=False):
         budget_col1, budget_col2 = st.columns([1, 1.2])
         with budget_col1:
             screen_budget = st.slider(
@@ -1084,26 +1189,58 @@ def _render_break_timer() -> None:
 
         running = st.session_state["timer_running"]
 
-        c_int1, c_int2 = st.columns(2)
-        with c_int1:
-            focus_minutes = st.number_input(
-                "Focus Work Duration (minutes)", min_value=1, max_value=120, value=20, step=1, disabled=running
-            )
-        with c_int2:
-            rest_minutes = st.number_input(
-                "Micro-Break Rest Duration (minutes)", min_value=1, max_value=30, value=5, step=1, disabled=running
-            )
+        # Adaptive Pacing Calculation
+        adaptive_enabled = st.session_state.get("adaptive_pacing", False)
+        pred_dict = st.session_state.get("survey_prediction", {})
+        survey_score = pred_dict.get("predicted_score", 0.0) if isinstance(pred_dict, dict) else 0.0
+        if survey_score >= 60:
+            suggested_focus, suggested_rest, pacing_tier = 15, 5, "Intensive Corneal Recovery (High Fatigue)"
+        elif survey_score >= 35:
+            suggested_focus, suggested_rest, pacing_tier = 20, 3, "Standard 20-20-20 Micro-Pacing"
+        else:
+            suggested_focus, suggested_rest, pacing_tier = 25, 5, "Sustained Focus & Preventative Care"
 
-        regain_col1, regain_col2 = st.columns(2)
-        with regain_col1:
+        default_focus = suggested_focus if adaptive_enabled else 20
+        default_rest = suggested_rest if adaptive_enabled else 5
+
+        mode_col1, mode_col2 = st.columns(2)
+        with mode_col1:
+            adaptive_toggle = st.toggle(
+                "🧠 Smart Biometric Adaptive Pacing",
+                value=adaptive_enabled,
+                disabled=running,
+                help="Dynamically recalibrates focus & break durations based on your asthenopia fatigue profile and cumulative screen load.",
+            )
+            st.session_state["adaptive_pacing"] = adaptive_toggle
+        with mode_col2:
             strict_toggle = st.toggle(
-                "🔒 Regain Strict Interlock",
+                "🔒 AsthenoZero Strict Interlock",
                 value=st.session_state.get("strict_interlock", False),
                 disabled=running,
                 help="Locks pause/reset during break sessions so you cannot cheat or skip ocular rest.",
             )
             st.session_state["strict_interlock"] = strict_toggle
-        with regain_col2:
+
+        if adaptive_toggle:
+            st.html(
+                f"""<div style="background:rgba(56,189,248,0.1); border:1px solid #38BDF8; border-radius:8px; padding:10px 14px; margin-bottom:12px;">
+<div style="font-weight:700; color:#38BDF8; font-size:0.88rem;">🧠 Smart Biometric Cadence: {pacing_tier}</div>
+<div style="font-size:0.8rem; color:#94A3B8;">Ocular algorithm tuned work cycle to <strong>{suggested_focus}m focus</strong> / <strong>{suggested_rest}m rest</strong> based on your fatigue telemetry.</div>
+</div>"""
+            )
+
+        c_int1, c_int2 = st.columns(2)
+        with c_int1:
+            focus_minutes = st.number_input(
+                "Focus Work Duration (minutes)", min_value=1, max_value=120, value=default_focus, step=1, disabled=running
+            )
+        with c_int2:
+            rest_minutes = st.number_input(
+                "Micro-Break Rest Duration (minutes)", min_value=1, max_value=30, value=default_rest, step=1, disabled=running
+            )
+
+        tone_col1, _ = st.columns([1, 1])
+        with tone_col1:
             if st.button("🎧 Play 432Hz Calm Alpha Tone", use_container_width=True, help="Science-backed frequency for deep focus & ocular rest"):
                 trigger_audio_chime("alpha_focus")
                 st.toast("Playing 432Hz alpha harmonic tone...", icon="🎵")
@@ -1137,7 +1274,7 @@ def _render_break_timer() -> None:
             if st.session_state.get("strict_interlock", False) and st.session_state["timer_kind"] == "Break":
                 st.html(
                     """<div style="background:rgba(239,68,68,0.15); border:1px solid #EF4444; border-radius:8px; padding:10px 14px; margin-top:8px; text-align:center;">
-<strong style="color:#FCA5A5;">🔒 Regain Strict Interlock Active:</strong> Look away at 20+ feet. Pausing is disabled until the break finishes.
+<strong style="color:#FCA5A5;">🔒 AsthenoZero Strict Interlock Active:</strong> Look away at 20+ feet. Pausing is disabled until the break finishes.
 </div>"""
                 )
             else:

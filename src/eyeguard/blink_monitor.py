@@ -102,6 +102,11 @@ class BlinkMonitor:
             self.calibration_samples: list[float] = []
             self.threshold: float | None = None
             self.blink_count = 0
+            self.complete_blink_count = 0
+            self.incomplete_blink_count = 0
+            self.min_ear_in_current_blink: float | None = None
+            self.distance_samples: list[float] = []
+            self.ambient_samples: list[float] = []
             self.frame_count = 0
             self.face_frame_count = 0
             self.valid_seconds = 0.0
@@ -119,6 +124,11 @@ class BlinkMonitor:
             self.calibration_samples = []
             self.threshold = None
             self.blink_count = 0
+            self.complete_blink_count = 0
+            self.incomplete_blink_count = 0
+            self.min_ear_in_current_blink = None
+            self.distance_samples = []
+            self.ambient_samples = []
             self.frame_count = 0
             self.face_frame_count = 0
             self.valid_seconds = 0.0
@@ -168,10 +178,29 @@ class BlinkMonitor:
             result = self._landmarker.detect_for_video(image, timestamp_ms)
             face = result.face_landmarks[0] if result.face_landmarks else None
             ear = None
+            estimated_distance_in = None
             if face is not None and len(face) > max(RIGHT_EYE + LEFT_EYE):
                 right_ear = _eye_aspect_ratio(face, RIGHT_EYE, width, height)
                 left_ear = _eye_aspect_ratio(face, LEFT_EYE, width, height)
                 ear = (right_ear + left_ear) / 2.0
+
+                # Inter-canthal distance for screen proximity (outer canthi: 33 and 263)
+                if len(face) > 263:
+                    x33, y33 = float(face[33].x) * width, float(face[33].y) * height
+                    x263, y263 = float(face[263].x) * width, float(face[263].y) * height
+                    ipd_px = ((x33 - x263) ** 2 + (y33 - y263) ** 2) ** 0.5
+                    if ipd_px > 10:
+                        dist_cm = (9.5 * (0.82 * width)) / ipd_px
+                        estimated_distance_in = max(10.0, min(42.0, dist_cm / 2.54))
+
+            # Ambient room luminance from peripheral non-face corners
+            patch_h = max(1, min(30, height // 10))
+            patch_w = max(1, min(30, width // 10))
+            corner_l = rgb[0:patch_h, 0:patch_w]
+            corner_r = rgb[0:patch_h, max(0, width - patch_w):width]
+            lum_l = float(corner_l.mean()) if corner_l.size else 110.0
+            lum_r = float(corner_r.mean()) if corner_r.size else 110.0
+            ambient_val = (lum_l + lum_r) / 2.0
         except Exception as error:
             with self._lock:
                 self.last_error = str(error)
@@ -203,15 +232,31 @@ class BlinkMonitor:
                             self.valid_seconds += delta
                     self.previous_valid_frame_at = now
                     self.last_ear = ear
+
+                    if estimated_distance_in is not None:
+                        self.distance_samples.append(estimated_distance_in)
+                    self.ambient_samples.append(ambient_val)
+
                     threshold = self.threshold if self.threshold is not None else 0.2
                     if ear < threshold:
                         if self.eye_closed_since is None:
                             self.eye_closed_since = now
+                            self.min_ear_in_current_blink = ear
+                        else:
+                            if self.min_ear_in_current_blink is not None:
+                                self.min_ear_in_current_blink = min(self.min_ear_in_current_blink, ear)
                     elif self.eye_closed_since is not None:
                         closed_duration = now - self.eye_closed_since
                         if 0.06 <= closed_duration <= 0.8:
                             self.blink_count += 1
+                            # Complete blink check: deep eyelid closure drops EAR below 70% of threshold
+                            deep_thresh = threshold * 0.70
+                            if self.min_ear_in_current_blink is not None and self.min_ear_in_current_blink <= deep_thresh:
+                                self.complete_blink_count += 1
+                            else:
+                                self.incomplete_blink_count += 1
                         self.eye_closed_since = None
+                        self.min_ear_in_current_blink = None
 
         return frame
 
@@ -250,11 +295,50 @@ class BlinkMonitor:
             else:
                 quality = "Low tracking coverage"
 
+            # Incomplete Blink & Meibomian Gland Pump Efficiency
+            total_b = self.blink_count
+            comp_b = self.complete_blink_count
+            incomp_b = self.incomplete_blink_count
+            pump_efficiency = round((comp_b / total_b * 100.0), 1) if total_b > 0 else 100.0
+
+            # Distance & Ergonomic Posture
+            avg_dist = statistics.median(self.distance_samples) if self.distance_samples else 22.0
+            if avg_dist < 16.0:
+                posture_status = "⚠️ Leaning Too Close (<16 in) - High Ciliary Strain"
+                posture_tier = "Warning"
+            elif avg_dist <= 28.0:
+                posture_status = "✅ Optimal Ergonomic Distance (20-26 in)"
+                posture_tier = "Optimal"
+            else:
+                posture_status = "ℹ️ Distant Viewing (>28 in)"
+                posture_tier = "Distant"
+
+            # Ambient Lux & Contrast Stress
+            avg_ambient = statistics.median(self.ambient_samples) if self.ambient_samples else 110.0
+            if avg_ambient < 55.0:
+                ambient_status = "🌙 Dim Room / High Glare Contrast"
+                contrast_stress = "Elevated"
+            elif avg_ambient <= 165.0:
+                ambient_status = "💡 Balanced Ergonomic Lighting"
+                contrast_stress = "Optimal"
+            else:
+                ambient_status = "☀️ Bright Environment / Surface Glare"
+                contrast_stress = "Moderate"
+
             return {
                 "phase": self.phase,
                 "seconds_remaining": remaining,
                 "progress": progress,
                 "blink_count": self.blink_count,
+                "complete_blinks": comp_b,
+                "incomplete_blinks": incomp_b,
+                "meibomian_pump_efficiency": pump_efficiency,
+                "distance_inches": round(avg_dist, 1),
+                "posture_status": posture_status,
+                "posture_tier": posture_tier,
+                "ambient_lux_proxy": round(avg_ambient, 0),
+                "ambient_status": ambient_status,
+                "contrast_stress": contrast_stress,
                 "blink_rate": blink_rate,
                 "coverage_percent": coverage,
                 "valid_seconds": self.valid_seconds,
