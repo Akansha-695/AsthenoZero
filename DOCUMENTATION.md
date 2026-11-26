@@ -45,7 +45,7 @@ flowchart TD
         A1["Tab 1: Clinical Risk Assessment"]
         A2["Tab 2: Live Blink Diagnostic (60s Test)"]
         A3["Tab 3: Habit Diary & Screen Budgeting"]
-        A4["Tab 4: 20-20-20 Timer with Strict Interlock"]
+        A4["Tab 4: 20-20-20 Timer with Smart Adaptive Pacing & Strict Interlock"]
         A5["Tab 5: Vision Gym & Ocular Physical Therapy"]
         A6["Tab 6: Care Guide & Ergonomic Audit"]
         A7["Sidebar: Credit Vault & Examiner Telemetry"]
@@ -315,7 +315,10 @@ For patent filing (e.g., Provisional Patent Application with USPTO/IPO/EPO), the
 | Invalidation / Prior Art Reference | Prior Art Limitation | AsthenoZero Inventive Step |
 | :--- | :--- | :--- |
 | **US 2018/0228362 (Eye Tracking Timer)** | Generic webcam timer; no cognitive task standardization. | **Isomorphic 60s Reading Stimulus:** Standardizes cognitive demand to isolate true asthenopic blink suppression from random task variance. |
-| **US 2021/0145344 (Digital Dry Eye Survey)** | Relies solely on subjective questionnaire scores. | **Objective-Subjective Divergence Index:** Cross-stratifies survey scores with webcam EAR kinetics to detect asymptomatic dry eye before tissue breakdown. |
+| **US 2021/0145344 (Digital Dry Eye Survey)** | Relies solely on subjective questionnaire scores. | **Subjective-Objective Divergence Index (SO-DI):** Cross-stratifies survey scores with webcam EAR kinetics to detect asymptomatic "Silent Asthenopia" before irreversible meibomian dropout. |
+| **Conventional Blink Trackers** | Binary open/close blink counting only; ignores blink depth. | **Meibomian Gland Pump Efficiency Metric:** Quantifies complete vs incomplete blink ratios based on minimum palpebral margin displacement ($EAR_{min}$). |
+| **Fixed Hardware Proximity Sensors** | Requires dedicated infrared or ultrasonic depth cameras. | **Webcam Canthal Triangulation:** Employs outer canthal inter-landmark span (33 & 263) calibrated against adult anthropometric baselines for zero-hardware posture & distance telemetry. |
+| **Consumer Screen-Time Trackers (Apple Screen Time, Forest)** | Passive time accumulation without physiological consequence modeling. | **Interactive 5-Year Digital Eye Twin:** Simulates compound Meibomian ductal atrophy %, TBUT collapse, and ciliary spasm risk, modeling unmitigated vs. mitigated outcomes. |
 | **Standard Gamification Apps (Duolingo, Forest)** | Allows users to bypass missed days with money or ad views. | **Physiologically-Gated Recovery Protocol:** Enforces physical ocular muscle exercises and blink verification before unfreezing habit streaks. |
 | **Cloud-Based Vision Trackers** | Streams or buffers video to servers, violating HIPAA/GDPR. | **In-Memory Zero Frame Retention:** 100% volatile RAM processing; zero frames or biometric face vectors persist on disk. |
 
