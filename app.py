@@ -494,22 +494,63 @@ Percentile rankings calibrated against N=139 clinical research survey participan
         cond_cols = st.columns(2)
         for idx, cond in enumerate(vulnerable_conditions):
             with cond_cols[idx % 2]:
-                symptoms_list = "".join(f"<li>{s}</li>" for s in cond['hallmark_symptoms'])
+                badge_color = cond.get("badge_color", "#F59E0B")
+                risk_pct = cond.get("risk_pct", 60)
+                short_sum = cond.get("short_summary", cond.get("etiology", ""))
+                tags = cond.get("visual_tags", [])
+                tag_chips = "".join(
+                    f"""<span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.14); color:#E2E8F0; font-size:0.75rem; padding:2px 8px; border-radius:12px; margin:2px 4px 2px 0; display:inline-block;">⚡ {t}</span>"""
+                    for t in tags
+                )
+                symptom_chips = "".join(
+                    f"""<span style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#FCA5A5; font-size:0.75rem; padding:2px 8px; border-radius:12px; margin:2px 4px 2px 0; display:inline-block;">⚠️ {s}</span>"""
+                    for s in cond["hallmark_symptoms"]
+                )
+                rx_short = cond.get("rx_short", cond.get("prevention", ""))
+
                 st.html(
-                    f"""<div class="clinical-card" style="border-left: 4px solid {cond['badge_color']} !important; margin-bottom: 12px !important; height: calc(100% - 12px);">
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
-    <strong style="color:#F8FAFC; font-size:1.02rem;">{cond['icon']} {cond['name']}</strong>
-    <span style="font-size:0.72rem; font-weight:800; color:{cond['badge_color']}; text-transform:uppercase; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; border:1px solid {cond['badge_color']};">{cond['severity']}</span>
+                    f"""<div class="clinical-card" style="border-left: 4px solid {badge_color} !important; margin-bottom: 12px !important; height: calc(100% - 12px); display:flex; flex-direction:column; justify-content:space-between;">
+<div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+        <strong style="color:#F8FAFC; font-size:1.02rem;">{cond['icon']} {cond['name']}</strong>
+        <span style="font-size:0.72rem; font-weight:800; color:{badge_color}; text-transform:uppercase; background:rgba(0,0,0,0.3); padding:3px 8px; border-radius:4px; border:1px solid {badge_color};">{cond['severity']}</span>
+    </div>
+    
+    <!-- Visual Risk Gauge Bar -->
+    <div style="background:rgba(255,255,255,0.08); border-radius:4px; height:5px; margin:6px 0 10px 0; overflow:hidden;">
+        <div style="background:{badge_color}; width:{risk_pct}%; height:100%; border-radius:4px;"></div>
+    </div>
+
+    <!-- 1-Line Punchy Summary -->
+    <div style="font-size:0.86rem; color:#CBD5E1; line-height:1.45; margin-bottom:8px;">
+        {short_sum}
+    </div>
+
+    <!-- Visual Key Tags -->
+    <div style="margin-bottom:8px;">
+        {tag_chips}
+    </div>
+
+    <!-- Symptoms as Visual Chips -->
+    <div style="font-size:0.76rem; font-weight:700; color:#38BDF8; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px;">Hallmark Symptoms:</div>
+    <div style="margin-bottom:8px;">
+        {symptom_chips}
+    </div>
 </div>
-<div style="font-size:0.85rem; color:#CBD5E1; line-height:1.5; margin-bottom:10px;">
-    {cond['etiology']}
-</div>
-<div style="font-size:0.8rem; font-weight:700; color:#38BDF8; margin-bottom:3px;">Hallmark Symptoms to Monitor:</div>
-<ul style="padding-left:18px; margin:0 0 10px 0; font-size:0.8rem; color:#94A3B8; line-height:1.5;">
-    {symptoms_list}
-</ul>
-<div style="font-size:0.8rem; background:rgba(6,182,212,0.1); border:1px solid rgba(6,182,212,0.25); border-radius:6px; padding:8px 10px; color:#E2E8F0;">
-    <strong style="color:#38BDF8;">Clinical Prophylaxis:</strong> {cond['prevention']}
+
+<div>
+    <!-- Visual Action Banner -->
+    <div style="font-size:0.8rem; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3); border-radius:6px; padding:7px 10px; color:#D1FAE5; margin-top:6px;">
+        <strong style="color:#34D399;">🛡️ Clinical Action:</strong> {rx_short}
+    </div>
+
+    <!-- Collapsible Deep Medical Mechanism -->
+    <details style="margin-top:6px;">
+        <summary style="font-size:0.75rem; color:#64748B; cursor:pointer;">🔬 View Clinical Mechanism & Etiology</summary>
+        <div style="font-size:0.78rem; color:#94A3B8; margin-top:4px; padding:6px 8px; background:rgba(0,0,0,0.25); border-radius:4px; line-height:1.4;">
+            {cond['etiology']}
+        </div>
+    </details>
 </div>
 </div>"""
                 )
@@ -523,15 +564,50 @@ Percentile rankings calibrated against N=139 clinical research survey participan
         diet_cols = st.columns(2)
         for idx, d_item in enumerate(diet_plan):
             with diet_cols[idx % 2]:
+                food_chips = d_item.get("food_chips", [])
+                if not food_chips and "food_sources" in d_item:
+                    food_chips = [f.strip() for f in d_item["food_sources"].split(",")]
+                chips_html = "".join(
+                    f"""<span style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#F1F5F9; font-size:0.75rem; padding:2px 7px; border-radius:10px; margin:2px 3px 2px 0; display:inline-block;">{fc}</span>"""
+                    for fc in food_chips
+                )
+                benefit_text = d_item.get("benefit", d_item.get("clinical_mechanism", "")[:90] + "...")
+                benefit_icon = d_item.get("benefit_icon", "✨")
+
                 st.html(
-                    f"""<div class="clinical-card" style="border-left: 4px solid #06B6D4 !important; margin-bottom: 12px !important; height: calc(100% - 12px);">
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-    <strong style="color:#F8FAFC; font-size:1rem;">{d_item['icon']} {d_item['nutrient']}</strong>
-    <span style="font-size:0.72rem; font-weight:800; color:#38BDF8; background:rgba(6,182,212,0.15); padding:2px 8px; border-radius:4px;">{d_item['priority']}</span>
+                    f"""<div class="clinical-card" style="border-left: 4px solid #06B6D4 !important; margin-bottom: 12px !important; height: calc(100% - 12px); display:flex; flex-direction:column; justify-content:space-between;">
+<div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+        <strong style="color:#F8FAFC; font-size:1.02rem;">{d_item['icon']} {d_item['nutrient']}</strong>
+        <span style="font-size:0.72rem; font-weight:800; color:#38BDF8; background:rgba(6,182,212,0.15); padding:2px 8px; border-radius:4px; border:1px solid rgba(6,182,212,0.3);">{d_item['priority']}</span>
+    </div>
+
+    <!-- Target Daily Intake Badge -->
+    <div style="display:inline-block; background:rgba(16,185,129,0.15); border:1px solid #10B981; color:#34D399; font-weight:800; font-size:0.78rem; padding:2px 9px; border-radius:12px; margin-bottom:8px;">
+        🎯 Daily Target: {d_item['dosage']}
+    </div>
+
+    <!-- Punchy Visual Superpower / Benefit -->
+    <div style="font-size:0.86rem; color:#F8FAFC; font-weight:600; margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+        <span>{benefit_icon}</span> <span>{benefit_text}</span>
+    </div>
+
+    <!-- Food Sources as Visual Food Badges -->
+    <div style="font-size:0.76rem; font-weight:700; color:#94A3B8; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px;">Recommended Food Sources:</div>
+    <div style="margin-bottom:8px;">
+        {chips_html}
+    </div>
 </div>
-<div style="font-size:0.82rem; color:#34D399; font-weight:700; margin-bottom:4px;">Target Daily Intake: {d_item['dosage']}</div>
-<div style="font-size:0.84rem; color:#E2E8F0; margin-bottom:6px;"><strong>High-Potency Sources:</strong> {d_item['food_sources']}</div>
-<div style="font-size:0.8rem; color:#94A3B8; line-height:1.45;"><strong>Biological Mechanism:</strong> {d_item['clinical_mechanism']}</div>
+
+<div>
+    <!-- Collapsible Clinical Trial Mechanism -->
+    <details style="margin-top:6px;">
+        <summary style="font-size:0.75rem; color:#64748B; cursor:pointer;">ℹ️ Scientific Trial Mechanism (TFOS DEWS II / AREDS 2)</summary>
+        <div style="font-size:0.78rem; color:#94A3B8; margin-top:4px; padding:6px 8px; background:rgba(0,0,0,0.25); border-radius:4px; line-height:1.4;">
+            {d_item['clinical_mechanism']}
+        </div>
+    </details>
+</div>
 </div>"""
                 )
 

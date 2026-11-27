@@ -28,6 +28,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "💧",
             "severity": severity,
             "badge_color": "#EF4444" if severity == "High Vulnerability" else "#F59E0B",
+            "risk_pct": 88 if severity == "High Vulnerability" else 65,
+            "short_summary": "Blink suppression thickens eyelid oils, accelerating evaporative tear film collapse.",
+            "visual_tags": ["Rapid Tear Loss", "Oil Gland Plugging", "TBUT < 5s"],
+            "rx_short": "4-Phase Squeeze Drills + 40°C Warm Compress (5 min)",
             "etiology": (
                 "Sustained screen stare suppresses the involuntary blink reflex by 50% to 70%. "
                 "This blink inhibition causes meibum lipid secretions to thicken and stagnate within the tarsal glands, "
@@ -49,6 +53,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "🎯",
             "severity": severity,
             "badge_color": "#EF4444" if severity == "High Vulnerability" else "#F59E0B",
+            "risk_pct": 85 if severity == "High Vulnerability" else 60,
+            "short_summary": "Continuous near-point focus locks the intraocular focusing muscle in tonic spasm.",
+            "visual_tags": ["Ciliary Muscle Lock", "Distance Refocus Lag", "Brow Tension"],
+            "rx_short": "20-20-20 Rule (Look 20+ ft away to relax zonular fibers)",
             "etiology": (
                 "Continuous near-point focal fixation locks the intraocular ciliary sphincter in continuous tonic contraction. "
                 "Upon shifting gaze to distance objects, the zonular fibers cannot promptly relax, resulting in temporary distant blur "
@@ -69,6 +77,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "🔍",
             "severity": "Elevated Vulnerability",
             "badge_color": "#F59E0B",
+            "risk_pct": 60,
+            "short_summary": "Dehydrated contact lenses draw water from the cornea, creating microscopic epithelial friction.",
+            "visual_tags": ["Lens Dehydration", "Epithelial Friction", "End-of-Day Redness"],
+            "rx_short": "Preservative-free rewetting drops every 90m + computer glasses",
             "etiology": (
                 "Under reduced digital blink rates, hydrophilic contact lenses draw moisture away from the pre-corneal tear film. "
                 "The dehydrated lens edge creates mechanical shear friction against the delicate corneal epithelium."
@@ -88,6 +100,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "🌙",
             "severity": "Elevated Vulnerability",
             "badge_color": "#8B5CF6",
+            "risk_pct": 62,
+            "short_summary": "Late-night screen blue light blocks melatonin, disrupting cellular eye recovery during sleep.",
+            "visual_tags": ["Melatonin Blocked", "Truncated Mitosis", "Morning Eye Heaviness"],
+            "rx_short": "Strict 60-min digital curfew before bed + 7-8h restorative sleep",
             "etiology": (
                 "High-energy visible (HEV) blue wavelength exposure (450–480 nm) prior to sleep suppresses pineal melatonin secretion. "
                 "Insufficient deep sleep truncates the nocturnal metabolic clearance of corneal waste products and impairs lacrimal gland renewal."
@@ -107,6 +123,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "📱",
             "severity": "Moderate Vulnerability",
             "badge_color": "#06B6D4",
+            "risk_pct": 55,
+            "short_summary": "Holding phones too close (<14 in) forces inward eye convergence and neck strain.",
+            "visual_tags": ["Extreme Convergence", "Close-Range <14 in", "Medial Rectus Strain"],
+            "rx_short": "Enforce 16+ inch viewing distance + Figure-8 smooth pursuit drills",
             "etiology": (
                 "Handheld mobile displays are held at an average distance of 10–14 inches (substantially closer than monitors), "
                 "demanding severe downward gaze angulation and continuous medial rectus muscle convergence."
@@ -126,6 +146,10 @@ def get_vulnerable_conditions(habit_dict: dict[str, Any], score: float) -> list[
             "icon": "🛡️",
             "severity": "Low Risk",
             "badge_color": "#10B981",
+            "risk_pct": 15,
+            "short_summary": "Your screen habits and regular breaks keep your tear film and focusing muscles in healthy balance.",
+            "visual_tags": ["Tear Film Intact", "Relaxed Ciliary Focus", "Low Stress"],
+            "rx_short": "Maintain routine 20-20-20 preventative micro-breaks",
             "etiology": (
                 "Your screen habits, regular micro-breaks, and sleep duration currently provide adequate recuperation time. "
                 "Ocular surface tear film dynamics and ciliary accommodative tone remain in healthy equilibrium."
@@ -150,6 +174,9 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "nutrient": "Omega-3 Fatty Acids (EPA & DHA)",
             "icon": "🐟",
             "dosage": "1,000 – 1,200 mg / day",
+            "benefit": "Unclogs eyelid oil glands & prevents dry burning",
+            "benefit_icon": "💧",
+            "food_chips": ["🐟 Wild Salmon", "🐟 Sardines", "🌱 Chia Seeds", "🥑 Flaxseed Oil", "🥜 Walnuts"],
             "food_sources": "Wild salmon, sardines, mackerel, chia seeds, flaxseed oil, walnuts, algae oil",
             "clinical_mechanism": (
                 "Directly incorporates into Meibomian gland lipids, lowering the melting point of meibum "
@@ -158,9 +185,12 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "priority": "High Priority" if screen_time in ["6-8 hours", "More than 8 hours"] or score >= 6.0 else "Core Habit",
         },
         {
-            "nutrient": "Macular Carotenoids (Lutein 10mg & Zeaxanthin 2mg)",
+            "nutrient": "Macular Carotenoids (Lutein & Zeaxanthin)",
             "icon": "🥬",
             "dosage": "10 mg Lutein + 2 mg Zeaxanthin daily",
+            "benefit": "Internal biological sunglasses — filters 90% of toxic screen blue light",
+            "benefit_icon": "🛡️",
+            "food_chips": ["🥬 Steamed Spinach", "🥬 Curly Kale", "🥚 Pasture Egg Yolks", "🫑 Bell Peppers", "🥜 Pistachios"],
             "food_sources": "Steamed spinach, curly kale, Swiss chard, pasture-raised egg yolks, orange bell peppers, pistachios",
             "clinical_mechanism": (
                 "Deposits directly into the macular fovea, acting as 'internal biological sunglasses' that absorb high-energy "
@@ -172,6 +202,9 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "nutrient": "Bioflavonoids & Anthocyanins (Micro-Vascular Flow)",
             "icon": "🫐",
             "dosage": "1 cup daily (or 160 mg standardized extract)",
+            "benefit": "Relaxes eye focusing muscles & boosts micro-circulation",
+            "benefit_icon": "⚡",
+            "food_chips": ["🫐 Wild Blueberries", "🍒 Dark Cherries", "🫐 Bilberries", "🍇 Blackcurrants"],
             "food_sources": "Wild blueberries, bilberries, blackcurrants, aronia berries, dark cherries",
             "clinical_mechanism": (
                 "Stimulates micro-capillary blood perfusion to the intraocular ciliary muscle and extraocular recti, "
@@ -183,6 +216,9 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "nutrient": "Vitamin A & Preformed Beta-Carotene",
             "icon": "🥕",
             "dosage": "700 – 900 mcg RAE daily",
+            "benefit": "Repairs corneal protective mucin layer & stops friction",
+            "benefit_icon": "✨",
+            "food_chips": ["🥕 Carrots", "🍠 Sweet Potatoes", "🎃 Pumpkin", "🍑 Dried Apricots"],
             "food_sources": "Carrots, roasted sweet potatoes, butternut squash, cantaloupe, dried apricots",
             "clinical_mechanism": (
                 "Crucial for the differentiation of conjunctival goblet cells that secrete the hydrophilic mucin layer—the "
@@ -194,6 +230,9 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "nutrient": "Systemic Osmotic Hydration Protocol",
             "icon": "💧",
             "dosage": "2.5 – 3.0 Liters water + balanced electrolytes",
+            "benefit": "Prevents tear film hyperosmolarity, saltiness & stinging",
+            "benefit_icon": "🌊",
+            "food_chips": ["💧 Mineral Water", "🥥 Coconut Water", "🍋 Lemon Infused Water", "🥒 Cucumber"],
             "food_sources": "Mineral water, coconut water, water infused with lemon & pinch of Himalayan salt, cucumber",
             "clinical_mechanism": (
                 "The lacrimal glands produce the aqueous tear layer directly from systemic circulating blood volume. "
@@ -209,6 +248,9 @@ def get_ophthalmic_dietary_protocol(habit_dict: dict[str, Any], score: float) ->
             "nutrient": "Magnesium Glycinate & Tart Cherry (Nocturnal Repair)",
             "icon": "🍒",
             "dosage": "200 – 300 mg Magnesium at night",
+            "benefit": "Overnight muscle relaxation & cellular corneal healing",
+            "benefit_icon": "💤",
+            "food_chips": ["🍒 Tart Cherry Juice", "🎃 Pumpkin Seeds", "🍫 Dark Chocolate (>85%)", "🥜 Almonds"],
             "food_sources": "Tart cherry juice, pumpkin seeds, dark chocolate (>85%), almonds",
             "clinical_mechanism": (
                 "Naturally promotes endogenous melatonin release and relaxes hyper-contracted extraocular muscles, "
