@@ -820,7 +820,16 @@ def _render_blink_test() -> None:
 
     try:
         monitor.initialize()
-        from streamlit_webrtc import webrtc_streamer
+        from streamlit_webrtc import RTCConfiguration, webrtc_streamer
+        rtc_config = RTCConfiguration(
+            {
+                "iceServers": [
+                    {"urls": ["stun:stun.l.google.com:19302"]},
+                    {"urls": ["stun:stun1.l.google.com:19302"]},
+                    {"urls": ["stun:stun2.l.google.com:19302"]},
+                ]
+            }
+        )
     except Exception as error:
         st.error(f"Could not initialize computer vision subsystem: {error}")
         return
@@ -836,6 +845,7 @@ def _render_blink_test() -> None:
         context = webrtc_streamer(
             key="eyeguard-blink-camera",
             video_frame_callback=process_frame,
+            rtc_configuration=rtc_config,
             media_stream_constraints={
                 "video": {"width": {"ideal": 640}, "height": {"ideal": 480}},
                 "audio": False,
