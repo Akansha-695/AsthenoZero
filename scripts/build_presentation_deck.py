@@ -1,4 +1,7 @@
-"""Build an executive, high-impact PowerPoint presentation deck for AsthenoZero."""
+"""Build a visually stunning, magnetic 16:9 PowerPoint presentation deck for AsthenoZero.
+Includes real application screenshots, generated scientific diagrams, rich layout variety,
+and compelling narrative flow.
+"""
 
 from __future__ import annotations
 
@@ -10,21 +13,22 @@ from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+ASSETS_DIR = PROJECT_ROOT / "output" / "presentation" / "assets"
 OUTPUT_DIR = PROJECT_ROOT / "output" / "presentation"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PPTX_PATH_1 = OUTPUT_DIR / "AsthenoZero_Presentation.pptx"
 PPTX_PATH_2 = PROJECT_ROOT / "AsthenoZero_Presentation.pptx"
 
-# Color Palette: Clinical Tech Dark Theme
-COLOR_BG = RGBColor(11, 17, 32)         # Deep Obsidian #0B1120
-COLOR_CARD = RGBColor(21, 32, 54)       # Card Surface #152036
-COLOR_CARD_BORDER = RGBColor(40, 60, 95)
-COLOR_CYAN = RGBColor(56, 189, 248)      # Tech Cyan #38BDF8
-COLOR_EMERALD = RGBColor(16, 185, 129)   # Accent Emerald #10B981
-COLOR_AMBER = RGBColor(245, 158, 11)     # Warning Amber #F59E0B
-COLOR_CORAL = RGBColor(239, 68, 68)      # Alert Red #EF4444
-COLOR_WHITE = RGBColor(248, 250, 252)    # Main Text #F8FAFC
-COLOR_MUTED = RGBColor(148, 163, 184)    # Secondary Text #94A3B8
+# Color Palette: Obsidian Health-Tech Theme
+COLOR_BG = RGBColor(10, 15, 29)          # Deep Obsidian #0A0F1D
+COLOR_CARD = RGBColor(17, 26, 46)        # Card Surface #111A2E
+COLOR_CARD_BORDER = RGBColor(35, 52, 84) # Card Border #233454
+COLOR_CYAN = RGBColor(56, 189, 248)       # Electric Cyan #38BDF8
+COLOR_EMERALD = RGBColor(16, 185, 129)    # Emerald Accent #10B981
+COLOR_AMBER = RGBColor(245, 158, 11)      # Amber Warning #F59E0B
+COLOR_CORAL = RGBColor(244, 63, 94)       # Coral Alert #F43F5E
+COLOR_WHITE = RGBColor(248, 250, 252)     # Primary Text #F8FAFC
+COLOR_MUTED = RGBColor(148, 163, 184)     # Secondary Text #94A3B8
 
 
 def set_slide_background(slide):
@@ -37,7 +41,7 @@ def set_slide_background(slide):
 
 def add_header(slide, category: str, title: str):
     """Adds a standardized category badge and high-impact title."""
-    header_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(11.7), Inches(1.1))
+    header_box = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(11.7), Inches(1.15))
     tf = header_box.text_frame
     tf.word_wrap = True
     tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
@@ -58,731 +62,788 @@ def add_header(slide, category: str, title: str):
     p_title.space_before = Pt(2)
 
 
-def add_card(slide, left: float, top: float, width: float, height: float, border_color=COLOR_CARD_BORDER):
+def add_card(slide, left: float, top: float, width: float, height: float, border_color=COLOR_CARD_BORDER, fill_color=COLOR_CARD):
     """Adds a rounded rectangle card container."""
     shape = slide.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(left), Inches(top), Inches(width), Inches(height))
     shape.fill.solid()
-    shape.fill.fore_color.rgb = COLOR_CARD
+    shape.fill.fore_color.rgb = fill_color
     shape.line.color.rgb = border_color
     shape.line.width = Pt(1.5)
     return shape
 
 
-def add_numbers_box(slide, left: float, top: float, width: float, height: float, title: str, stats: list[tuple[str, str]]):
-    """Adds a highlighted metrics and numbers box."""
-    add_card(slide, left, top, width, height, border_color=COLOR_EMERALD)
-    box = slide.shapes.add_textbox(Inches(left + 0.2), Inches(top + 0.2), Inches(width - 0.4), Inches(height - 0.4))
-    tf = box.text_frame
-    tf.word_wrap = True
-    tf.margin_left = tf.margin_top = tf.margin_right = tf.margin_bottom = 0
-
-    p_head = tf.paragraphs[0]
-    p_head.text = f"📊 {title.upper()}"
-    p_head.font.name = "Calibri"
-    p_head.font.size = Pt(11.5)
-    p_head.font.bold = True
-    p_head.font.color.rgb = COLOR_EMERALD
-
-    for num, label in stats:
-        p_num = tf.add_paragraph()
-        p_num.space_before = Pt(8)
-        r_num = p_num.add_run()
-        r_num.text = num
-        r_num.font.name = "Calibri"
-        r_num.font.size = Pt(16)
-        r_num.font.bold = True
-        r_num.font.color.rgb = COLOR_WHITE
-
-        r_lbl = p_num.add_run()
-        r_lbl.text = f"  {label}"
-        r_lbl.font.name = "Calibri"
-        r_lbl.font.size = Pt(10)
-        r_lbl.font.color.rgb = COLOR_MUTED
+def add_image_safe(slide, img_name: str, left: float, top: float, width: float | None = None, height: float | None = None):
+    """Safely adds an image if present, returning the shape."""
+    img_path = ASSETS_DIR / img_name
+    if not img_path.exists():
+        print(f"Warning: Image not found: {img_path}")
+        return None
+    kwargs = {"left": Inches(left), "top": Inches(top)}
+    if width:
+        kwargs["width"] = Inches(width)
+    if height:
+        kwargs["height"] = Inches(height)
+    return slide.shapes.add_picture(str(img_path), **kwargs)
 
 
 def build_deck():
     prs = Presentation()
-    # 16:9 Widescreen dimensions
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
     blank_layout = prs.slide_layouts[6]
 
     # =========================================================================
-    # SLIDE 1: Title Slide
+    # SLIDE 1: Title Slide (Hero Visual Layout)
     # =========================================================================
-    slide1 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide1)
+    s1 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s1)
 
-    t_box = slide1.shapes.add_textbox(Inches(1.2), Inches(1.5), Inches(11.0), Inches(4.5))
-    tf1 = t_box.text_frame
+    # Left content box
+    add_card(s1, 0.8, 1.2, 7.0, 5.3, border_color=COLOR_CYAN)
+    tbox = s1.shapes.add_textbox(Inches(1.1), Inches(1.4), Inches(6.4), Inches(4.9))
+    tf1 = tbox.text_frame
     tf1.word_wrap = True
 
-    p0 = tf1.paragraphs[0]
-    p0.text = "HEALTH-TECH & PRECISION BIOMETRICS • 2026"
-    p0.font.name = "Calibri"
-    p0.font.size = Pt(13)
-    p0.font.bold = True
-    p0.font.color.rgb = COLOR_CYAN
+    p = tf1.paragraphs[0]
+    p.text = "PRECISION HEALTH-TECH & BIOMETRICS • 2026"
+    p.font.size = Pt(11.5)
+    p.font.bold = True
+    p.font.color.rgb = COLOR_CYAN
 
-    p1 = tf1.add_paragraph()
-    p1.text = "AsthenoZero"
-    p1.font.name = "Calibri"
-    p1.font.size = Pt(46)
-    p1.font.bold = True
-    p1.font.color.rgb = COLOR_WHITE
-    p1.space_before = Pt(6)
+    p = tf1.add_paragraph()
+    p.text = "AsthenoZero"
+    p.font.size = Pt(44)
+    p.font.bold = True
+    p.font.color.rgb = COLOR_WHITE
+    p.space_before = Pt(4)
 
-    p2 = tf1.add_paragraph()
-    p2.text = "Precision Ocular Ergonomics & Digital Asthenopia Suite"
-    p2.font.name = "Calibri"
-    p2.font.size = Pt(22)
-    p2.font.bold = True
-    p2.font.color.rgb = COLOR_EMERALD
-    p2.space_before = Pt(4)
+    p = tf1.add_paragraph()
+    p.text = "Precision Ocular Ergonomics & Digital Asthenopia Suite"
+    p.font.size = Pt(18)
+    p.font.bold = True
+    p.font.color.rgb = COLOR_EMERALD
+    p.space_before = Pt(2)
 
-    p3 = tf1.add_paragraph()
-    p3.text = "A closed-loop platform uniting Machine Learning risk modeling, real-time MediaPipe computer vision kinematics, an enforceable behavioral credit economy, and clinical nutritional ophthalmology."
-    p3.font.name = "Calibri"
-    p3.font.size = Pt(13)
-    p3.font.color.rgb = COLOR_MUTED
-    p3.space_before = Pt(14)
+    p = tf1.add_paragraph()
+    p.text = "A breakthrough closed-loop system uniting Machine Learning risk triage, real-time MediaPipe computer vision kinematics, a physiologically-gated habit credit economy, and clinical nutritional ophthalmology."
+    p.font.size = Pt(11)
+    p.font.color.rgb = COLOR_MUTED
+    p.space_before = Pt(10)
 
-    p4 = tf1.add_paragraph()
-    p4.text = "Lead Author & Researcher: Akansha Kashyap  |  LinkedIn: linkedin.com/in/akansha-kashyap-b6a32b362\nSystem Classification: Digital Health / Software as a Medical Device (SaMD) Prototype"
-    p4.font.name = "Calibri"
-    p4.font.size = Pt(11)
-    p4.font.bold = True
-    p4.font.color.rgb = COLOR_CYAN
-    p4.space_before = Pt(22)
+    p = tf1.add_paragraph()
+    p.text = "Lead Author & Researcher: Akansha Kashyap\nLinkedIn: linkedin.com/in/akansha-kashyap-b6a32b362\nClassification: Digital Health / Software as a Medical Device (SaMD) Prototype"
+    p.font.size = Pt(10.5)
+    p.font.bold = True
+    p.font.color.rgb = COLOR_WHITE
+    p.space_before = Pt(16)
+
+    # Right side image preview
+    add_card(s1, 8.1, 1.2, 4.4, 5.3, border_color=COLOR_CARD_BORDER)
+    add_image_safe(s1, "app_risk_gauge.png", 8.3, 1.4, width=4.0)
+    add_image_safe(s1, "app_eye_twin_slider.jpg", 8.3, 3.8, width=4.0)
 
     # =========================================================================
-    # SLIDE 2: The Clinical Problem
+    # SLIDE 2: The Medical Crisis (Split: Medical Problem + Chart)
     # =========================================================================
-    slide2 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide2)
-    add_header(slide2, "The Clinical Problem & Medical Crisis", "Digital Asthenopia & Computer Vision Syndrome (CVS)")
+    s2 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s2)
+    add_header(s2, "The Medical Epidemic", "Digital Asthenopia & The Silent Vision Crisis")
 
-    add_card(slide2, 0.8, 1.7, 7.8, 5.2)
-    c_box = slide2.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    ctf = c_box.text_frame
-    ctf.word_wrap = True
+    # Left card: Clinical pathology
+    add_card(s2, 0.8, 1.7, 6.2, 5.2)
+    c2_box = s2.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.8), Inches(4.8))
+    c2tf = c2_box.text_frame
+    c2tf.word_wrap = True
 
-    p = ctf.paragraphs[0]
-    p.text = "The Modern Screen Fatigue Epidemic:"
-    p.font.size = Pt(15)
+    p = c2tf.paragraphs[0]
+    p.text = "The 4 Hidden Pathological Drivers:"
+    p.font.size = Pt(13.5)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
     items2 = [
-        ("Blink Reflex Arc Suppression:", "Cognitive visual fixation suppresses involuntary blinking. Staring at screens causes blinking frequency to plummet, leaving the cornea uncovered and drying out."),
-        ("Precorneal Tear Film Rupture:", "Without regular eyelid closure, the outer lipid layer collapses. Tear Break-Up Time drops rapidly, exposing corneal sensory nerves to painful evaporation."),
-        ("Accommodative Ciliary Spasm:", "Near-point focal fixation forces the intraocular ciliary sphincter into continuous isometric cramping. When looking up, distance vision is blurry ('screen pseudomyopia')."),
-        ("Permanent Meibomian Gland Dropout:", "Partial incomplete blinks fail to express tarsal gland oils. Over 2 to 5 years, oil glands permanently atrophy, causing irreversible chronic dry eye."),
+        ("Blink Reflex Arc Suppression:", "Cognitive visual fixation suppresses involuntary blinking. Staring at screens causes blink rate to collapse from 18-20 down to <5 blinks/min."),
+        ("Precorneal Tear Film Rupture:", "Without regular eyelid apposition, the outer lipid layer collapses. Tear Break-Up Time (TBUT) falls under 5 seconds, exposing corneal sensory nerves."),
+        ("Accommodative Ciliary Spasm:", "Near-point convergence locks intraocular ciliary muscles in continuous isometric contraction ('screen pseudomyopia' & frontal brow aches)."),
+        ("Permanent Meibomian Dropout:", "Incomplete micro-blinks fail to mechanically pump eyelid oils. Glands clog and permanently atrophy over 2 to 5 years."),
     ]
     for h, desc in items2:
-        p_item = ctf.add_paragraph()
-        p_item.space_before = Pt(8)
+        p_item = c2tf.add_paragraph()
+        p_item.space_before = Pt(6)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide2, 8.9, 1.7, 3.6, 5.2, "Clinical Numbers", [
-        ("50% – 70%", "Reduction in spontaneous blink rate on screens"),
-        ("18-20 → <5", "Blinks/min drop (healthy baseline vs screen read)"),
-        ("< 5 Seconds", "Tear Break-Up Time (TBUT) under dry eye strain"),
-        ("68.4%", "Computer workers suffering active asthenopia"),
-        ("2.5x", "Higher tear evaporation rate in air-conditioned rooms")
-    ])
+    # Right side: Blink suppression timeline chart
+    add_card(s2, 7.3, 1.7, 5.2, 5.2, border_color=COLOR_CORAL)
+    add_image_safe(s2, "blink_suppression_chart.png", 7.45, 1.85, width=4.9)
 
     # =========================================================================
-    # SLIDE 3: System Architecture
+    # SLIDE 3: 5-Pillar Architecture (Visual Workflow Cards)
     # =========================================================================
-    slide3 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide3)
-    add_header(slide3, "Architectural Foundation", "AsthenoZero 5-Pillar Closed-Loop Platform")
+    s3 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s3)
+    add_header(s3, "System Architecture", "The AsthenoZero 5-Pillar Closed-Loop Platform")
 
     pillars = [
-        ("1. ML Predictive Core", "Trained on N=139 cohort. Evaluates 6 lifestyle factors and predicts exploratory asthenopia score (0–15) via L2 Ridge Regression.", COLOR_CYAN),
-        ("2. Real-Time Computer Vision", "Processes 468-pt MediaPipe mesh in volatile memory. Calculates EAR, blink completeness, screen distance, and ambient lux.", COLOR_EMERALD),
-        ("3. Behavioral Habit Economy", "AsthenoCredits reward pacing. Strict Rehabilitation Protocol physiologically gates streak unfreezing when coins hit 0.", COLOR_AMBER),
-        ("4. Clinical Pathology & Diet", "Stratifies vulnerability for 5 ocular conditions and provides AREDS 2 & TFOS DEWS II targeted nutritional protocols.", COLOR_CORAL),
-        ("5. Ocular Relaxation Studio", "Guided Vision Gym with animated SVG pursue drills and smart 20-20-20 timer with 432 Hz synthetic alpha acoustic tones.", COLOR_CYAN),
+        ("1. ML Predictive Core", "Trained on N=139 cohort. Evaluates 6 lifestyle factors and predicts baseline asthenopia (0–15) via L2 Ridge Regression.", COLOR_CYAN),
+        ("2. Computer Vision", "468-point MediaPipe mesh in volatile RAM. Tracks EAR, blink completeness, screen distance & ambient lux.", COLOR_EMERALD),
+        ("3. Behavioral Economy", "AsthenoCredits vault with Strict Rehabilitation Challenge. Physiologically gates streak unfreezing when coins hit 0.", COLOR_AMBER),
+        ("4. Pathology & Diet", "Stratifies risk for 5 ocular conditions and provides AREDS 2 & TFOS DEWS II targeted nutritional protocols.", COLOR_CORAL),
+        ("5. Ocular Relaxation", "Vision Gym with animated SVG pursue drills and smart 20-20-20 timer with 432 Hz synthetic alpha acoustic waves.", COLOR_CYAN),
     ]
 
     for i, (p_title, p_desc, p_color) in enumerate(pillars):
         x = 0.8 + (i * 2.45)
-        add_card(slide3, x, 1.7, 2.3, 5.2, border_color=p_color)
-        pbox = slide3.shapes.add_textbox(Inches(x + 0.15), Inches(1.85), Inches(2.0), Inches(4.8))
+        add_card(s3, x, 1.7, 2.3, 5.2, border_color=p_color)
+        pbox = s3.shapes.add_textbox(Inches(x + 0.15), Inches(1.85), Inches(2.0), Inches(4.8))
         ptf = pbox.text_frame
         ptf.word_wrap = True
-        ptf.margin_left = ptf.margin_top = ptf.margin_right = ptf.margin_bottom = 0
 
         p = ptf.paragraphs[0]
         p.text = p_title
-        p.font.size = Pt(13)
+        p.font.size = Pt(12.5)
         p.font.bold = True
         p.font.color.rgb = p_color
 
         p_body = ptf.add_paragraph()
         p_body.text = p_desc
-        p_body.font.size = Pt(10.5)
+        p_body.font.size = Pt(10)
         p_body.font.color.rgb = COLOR_WHITE
-        p_body.space_before = Pt(12)
+        p_body.space_before = Pt(10)
 
     # =========================================================================
-    # SLIDE 4: Machine Learning Predictive Core
+    # SLIDE 4: Machine Learning Predictive Core (Split: Specs + Dual-Panel Chart)
     # =========================================================================
-    slide4 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide4)
-    add_header(slide4, "Predictive Modeling", "Machine Learning Core: L2 Ridge Regression Pipeline")
+    s4 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s4)
+    add_header(s4, "Predictive Modeling", "Machine Learning Core: L2 Ridge Regression Pipeline")
 
-    add_card(slide4, 0.8, 1.7, 7.8, 5.2)
-    ml_box = slide4.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    mtf = ml_box.text_frame
-    mtf.word_wrap = True
+    # Left side: ML specifications
+    add_card(s4, 0.8, 1.7, 5.5, 5.2)
+    s4_box = s4.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.1), Inches(4.8))
+    s4tf = s4_box.text_frame
+    s4tf.word_wrap = True
 
-    p = mtf.paragraphs[0]
-    p.text = "How the Predictive Engine Works:"
-    p.font.size = Pt(14)
+    p = s4tf.paragraphs[0]
+    p.text = "Grouped 5-Fold Cross-Validation Metrics:"
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    ml_points = [
-        ("Why We Added It:", "Provides instant diagnostic triage before the user even turns on their webcam. Calculates personalized baseline risk from routine workstation behavior."),
-        ("Rigorous Grouped Validation:", "Trained on N=139 clinical survey responses. Identical response profiles were grouped within folds to completely eliminate data leakage."),
-        ("Model Comparison & Winner:", "Benchmarked against Mean Baseline (MAE 2.63) and Random Forest (MAE 2.47). L2 Regularized Ridge (alpha=5.0) achieved superior generalization: MAE 2.40 ± 0.32."),
-        ("Interactive Vector Gauge:", "Generates a real-time SVG semi-circular gauge color-coded into 4 clinical risk tiers (Low, Mild, Moderate, High Digital Strain)."),
+    ml_items = [
+        ("Cohort Sample Size:", "N = 139 clinical research survey participants."),
+        ("Leakage Prevention:", "Grouped identical response tuples into the same fold to prevent optimistic train-test leakage."),
+        ("Model Benchmark:", "Outperformed Dummy Baseline (MAE 2.63) and Random Forest (MAE 2.47) with an optimized L2 Ridge (alpha=5.0) achieving MAE 2.40 ± 0.32."),
+        ("Top Feature Drivers:", "Sleep Duration (+0.086 MAE loss upon permutation) and Vision Correction (+0.077) are the dominant predictors."),
+        ("Interactive Vector Gauge:", "Renders an SVG semi-circle risk meter color-coded into 4 risk tiers (Low, Mild, Moderate, High Digital Strain)."),
     ]
-    for h, desc in ml_points:
-        p_item = mtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in ml_items:
+        p_item = s4tf.add_paragraph()
+        p_item.space_before = Pt(5)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide4, 8.9, 1.7, 3.6, 5.2, "ML Model Metrics", [
-        ("N = 139", "Clinical survey cohort sample size"),
-        ("MAE 2.40", "Grouped 5-Fold Cross-Validation Error"),
-        ("RMSE 2.88", "Root Mean Squared Error (alpha=5.0)"),
-        ("+0.086 MAE", "Sleep Category (Top Permutation Feature)"),
-        ("+0.077 MAE", "Vision Correction (2nd Dominant Driver)")
-    ])
+    # Right side: Chart
+    add_card(s4, 6.6, 1.7, 5.9, 5.2, border_color=COLOR_EMERALD)
+    add_image_safe(s4, "ml_benchmark_chart.png", 6.75, 1.85, width=5.6)
 
     # =========================================================================
-    # SLIDE 5: Computer Vision Blink Diagnostics
+    # SLIDE 5: Computer Vision Diagnostics (Split: Formula + Live App Screenshot)
     # =========================================================================
-    slide5 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide5)
-    add_header(slide5, "Computer Vision Kinematics", "MediaPipe 468-Point Mesh & 60-Second Reading Protocol")
+    s5 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s5)
+    add_header(s5, "Computer Vision Kinematics", "MediaPipe 468-Point Mesh & 60-Second Reading Protocol")
 
-    add_card(slide5, 0.8, 1.7, 7.8, 5.2)
-    cv_box = slide5.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    cvtf = cv_box.text_frame
-    cvtf.word_wrap = True
+    # Left side: CV details
+    add_card(s5, 0.8, 1.7, 5.6, 5.2)
+    s5_box = s5.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.2), Inches(4.8))
+    s5tf = s5_box.text_frame
+    s5tf.word_wrap = True
 
-    p = cvtf.paragraphs[0]
+    p = s5tf.paragraphs[0]
     p.text = "Mathematical Precision Eye Tracking:"
-    p.font.size = Pt(14)
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    cv_points = [
-        ("Eye Aspect Ratio (EAR) Formulation:", "Computes bilateral ratio using 6 anatomical landmarks: EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|). Accurately distinguishes eyelid closure from gaze shift."),
-        ("5-Second Baseline Calibration:", "Calibrates to the user's unique eye aperture size at rest. Dynamically establishes personal closure threshold = resting_EAR * 0.72."),
-        ("Isomorphic 60s Reading Protocol:", "Solves the flaw of random blink trackers. Uses a calibrated 231-word clinical reading text so all users undergo identical cognitive load."),
-        ("Zero-Retention Privacy Architecture:", "Processed entirely in volatile RAM buffers. Zero video frames or biometric face vectors are stored to disk or transmitted over networks."),
+    cv_items = [
+        ("Eye Aspect Ratio (EAR):", "Formula: EAR = (|p2-p6| + |p3-p5|) / (2 * |p1-p4|). Accurately distinguishes eyelid closure from gaze shift."),
+        ("5-Second Calibration:", "Dynamically establishes personal threshold = resting_EAR * 0.72 to match individual facial anatomy."),
+        ("Isomorphic 60s Reading Text:", "Standardizes cognitive demand with a calibrated 231-word clinical passage, eliminating erratic testing variance."),
+        ("Zero-Retention Privacy:", "Processed 100% in volatile client RAM buffers. Zero video frames or facial vectors are stored or transmitted."),
     ]
-    for h, desc in cv_points:
-        p_item = cvtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in cv_items:
+        p_item = s5tf.add_paragraph()
+        p_item.space_before = Pt(6)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide5, 8.9, 1.7, 3.6, 5.2, "Kinematic Numbers", [
-        ("468 Points", "High-precision 3D facial topology landmarks"),
-        ("6 Fiducials", "Anatomical coordinate points tracked per eye"),
-        ("231 Words", "Standardized alphanumeric reading stimulus"),
-        ("60 Seconds", "Clinical diagnostic duration"),
-        ("0 Frames", "Saved to disk (100% Volatile Client RAM)")
-    ])
+    # Right side: App screenshot
+    add_card(s5, 6.7, 1.7, 5.8, 5.2, border_color=COLOR_CYAN)
+    add_image_safe(s5, "app_blink_diagnostic.png", 6.85, 1.85, width=5.5)
 
     # =========================================================================
-    # SLIDE 6: Incomplete Blinks & Meibomian Pump Efficiency
+    # SLIDE 6: Incomplete Blinks & Meibomian Pump % (Split: Novelty + Diagram)
     # =========================================================================
-    slide6 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide6)
-    add_header(slide6, "Patent Novelty Claim #1", "Incomplete Blink Ratio & Meibomian Gland Pump Efficiency")
+    s6 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s6)
+    add_header(s6, "Patent Novelty Claim #1", "Incomplete Blink Ratio & Meibomian Gland Pump Efficiency")
 
-    add_card(slide6, 0.8, 1.7, 7.8, 5.2)
-    ib_box = slide6.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    ibtf = ib_box.text_frame
-    ibtf.word_wrap = True
+    # Left side: Novelty breakdown
+    add_card(s6, 0.8, 1.7, 5.5, 5.2)
+    s6_box = s6.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.1), Inches(4.8))
+    s6tf = s6_box.text_frame
+    s6tf.word_wrap = True
 
-    p = ibtf.paragraphs[0]
-    p.text = "Why Blink Quality Matters More Than Quantity:"
-    p.font.size = Pt(14)
+    p = s6tf.paragraphs[0]
+    p.text = "Why Blink Depth Outweighs Simple Count:"
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    ib_points = [
-        ("The Clinical Discovery:", "In dry eye disease, patients often blink frequently, but 70%+ of the blinks are incomplete micro-blinks where eyelid margins never touch!"),
-        ("The Consequence:", "Incomplete blinks fail to mechanically compress the tarsal Meibomian glands, halting lipid oil flow and causing rapid tear evaporation."),
-        ("What Makes AsthenoZero Unique:", "Every existing blink tracker merely counts blinks as 0 or 1. AsthenoZero is the FIRST to classify blink completeness and calculate Meibomian Pump Efficiency %."),
-        ("Biometric Formulation:", "Blinks reaching EAR_min < 0.70 * threshold are Complete; shallower dips are Incomplete. Efficiency = (Complete / Total) * 100."),
+    ib_items = [
+        ("The Medical Finding:", "In dry eye disease, patients often blink frequently, but 70%+ are shallow micro-blinks where eyelid margins never touch!"),
+        ("The Gland Pump Failure:", "Micro-blinks fail to mechanically compress the tarsal Meibomian glands, halting lipid secretion and accelerating evaporative tear breakdown."),
+        ("The AsthenoZero Innovation:", "Every existing blink app only counts blinks as 0 or 1. AsthenoZero is the FIRST to classify blink completeness and calculate Meibomian Pump Efficiency %."),
+        ("Biometric Formulation:", "Blinks reaching EAR_min < 0.70 * threshold are Complete; shallower dips are Incomplete. Pump % = (Complete / Total) * 100."),
+        ("Clinical Threshold:", "Efficiency < 65% triggers targeted 4-phase squeeze exercise therapy."),
     ]
-    for h, desc in ib_points:
-        p_item = ibtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in ib_items:
+        p_item = s6tf.add_paragraph()
+        p_item.space_before = Pt(5)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide6, 8.9, 1.7, 3.6, 5.2, "Biometric Thresholds", [
-        ("< 0.70x", "Threshold factor for Complete Blink verification"),
-        ("< 65%", "Pump Efficiency trigger for squeeze therapy"),
-        ("30-40", "Meibomian gland orifices in upper eyelid"),
-        ("20-30", "Meibomian gland orifices in lower eyelid"),
-        ("100%", "Automated lipid pump efficiency calculation")
-    ])
+    # Right side: Kinematics diagram
+    add_card(s6, 6.6, 1.7, 5.9, 5.2, border_color=COLOR_EMERALD)
+    add_image_safe(s6, "cv_ear_landmarks.png", 6.75, 1.85, width=5.6)
 
     # =========================================================================
-    # SLIDE 7: Screen Distance & Ambient Lighting
+    # SLIDE 7: Screen Distance & Ambient Lighting (Infographic Layout)
     # =========================================================================
-    slide7 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide7)
-    add_header(slide7, "Zero-Hardware Ergonomics", "Canthal Distance Triangulation & Ambient Lux Analyzer")
+    s7 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s7)
+    add_header(s7, "Zero-Hardware Environmental Telemetry", "Canthal Distance Triangulation & Ambient Lux Analyzer")
 
-    add_card(slide7, 0.8, 1.7, 7.8, 5.2)
-    dist_box = slide7.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    dtf = dist_box.text_frame
+    # 2 Big Cards
+    add_card(s7, 0.8, 1.7, 5.7, 5.2, border_color=COLOR_CYAN)
+    d_box = s7.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.3), Inches(4.8))
+    dtf = d_box.text_frame
     dtf.word_wrap = True
 
     p = dtf.paragraphs[0]
-    p.text = "Hardware-Free Workstation Environmental Telemetry:"
+    p.text = "📐 Screen Distance & Postural Slouching"
     p.font.size = Pt(14)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    dist_points = [
-        ("Screen Distance Telemetry:", "Uses outer canthal landmarks (33 & 263) calibrated against adult 9.5 cm anatomical span to measure viewing distance in inches without LiDAR."),
-        ("Postural Slouch Warning:", "Detects forward-head slouch when distance drops <18 inches. Flags acute accommodative spasm risk and cervical spine strain."),
-        ("Ambient Room Lighting (Lux Proxy):", "Samples non-face corner pixels to calculate relative luminance: Y = 0.299R + 0.587G + 0.114B."),
-        ("Display Contrast Stress Analyzer:", "Identifies eye-straining dark rooms where bright monitor luminescence forces extreme pupil oscillation and retinal fatigue."),
+    d_items = [
+        ("Canthal Triangulation:", "Uses outer canthal landmarks (33 & 263) calibrated against adult 9.5 cm anatomical baseline to measure distance in inches."),
+        ("No External Sensors Needed:", "Delivers continuous posture telemetry through a standard webcam without requiring LiDAR or infrared depth cameras."),
+        ("Optimal Zone (20–28 inches):", "Maintains relaxed ciliary muscle focal accommodation and physiological vergence."),
+        ("Slouch Warning (<18 inches):", "Detects forward-head slouching and warns user of severe ciliary spasm risk and cervical strain."),
     ]
-    for h, desc in dist_points:
+    for h, desc in d_items:
         p_item = dtf.add_paragraph()
         p_item.space_before = Pt(8)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide7, 8.9, 1.7, 3.6, 5.2, "Ergonomic Zones", [
-        ("20 – 28 in", "Optimal Ergonomic Screen Distance"),
-        ("< 18 in", "Warning Threshold: Excessive Ciliary Spasm"),
-        ("> 30 in", "Distant Posture / Small Font Squinting"),
-        ("9.5 cm", "Anatomical adult inter-canthal calibration baseline"),
-        ("70 – 190 Y", "Balanced Room-to-Screen Lux Zone")
-    ])
+    add_card(s7, 6.8, 1.7, 5.7, 5.2, border_color=COLOR_AMBER)
+    l_box = s7.shapes.add_textbox(Inches(7.0), Inches(1.85), Inches(5.3), Inches(4.8))
+    ltf = l_box.text_frame
+    ltf.word_wrap = True
 
-    # =========================================================================
-    # SLIDE 8: Silent Asthenopia Detector (SO-DI)
-    # =========================================================================
-    slide8 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide8)
-    add_header(slide8, "Clinical Innovation #2", "Subjective-Objective Divergence Index (Silent Asthenopia)")
-
-    add_card(slide8, 0.8, 1.7, 7.8, 5.2)
-    sodi_box = slide8.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    soditf = sodi_box.text_frame
-    soditf.word_wrap = True
-
-    p = soditf.paragraphs[0]
-    p.text = "Detecting Asymptomatic Ocular Desiccation:"
+    p = ltf.paragraphs[0]
+    p.text = "💡 Ambient Lighting & Display Contrast Stress"
     p.font.size = Pt(14)
     p.font.bold = True
-    p.font.color.rgb = COLOR_CYAN
+    p.font.color.rgb = COLOR_AMBER
 
-    sodi_points = [
-        ("The Silent Asthenopia Trap:", "Software engineers, gamers, and students often adapt cognitively, reporting feeling 'fine' while their blink rate has collapsed to 4/min."),
-        ("Sensory Nerve Desensitization:", "Chronic tear evaporation numbs corneal subbasal nerve plexus endings, suppressing pain signals until permanent tissue breakdown occurs."),
-        ("The SO-DI Metric:", "Delta = Norm(Objective Blink Suppression & Incomplete Ratio) - Norm(Subjective Reported Discomfort)."),
-        ("Diagnostic Quadrant Alert:", "When subjective score is low (<30%) but objective suppression is severe (>60%), AsthenoZero triggers 'Silent Asthenopia Alert' to prevent irreversible damage."),
+    l_items = [
+        ("Peripheral Lux Sampling:", "Samples non-face corner pixels from video stream to compute relative luminance: Y = 0.299R + 0.587G + 0.114B."),
+        ("The Contrast Stress Danger:", "Staring at a bright screen in a pitch-dark room causes extreme pupil diameter oscillation and acute retinal fatigue."),
+        ("Balanced Lux Zone (70–190 Y):", "Promotes optimal pupillary equilibrium and reduces glare reflection."),
+        ("Glare / Excessive Alert (>190 Y):", "Flags harsh specular lighting causing reflection and squint-induced asthenopia."),
     ]
-    for h, desc in sodi_points:
-        p_item = soditf.add_paragraph()
+    for h, desc in l_items:
+        p_item = ltf.add_paragraph()
         p_item.space_before = Pt(8)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide8, 8.9, 1.7, 3.6, 5.2, "Diagnostic Quadrants", [
-        ("Silent Asthenopia", "High Objective Suppression + Low Pain"),
-        ("Concordant High", "Severe Discomfort + Severe Suppression"),
-        ("Homeostasis", "Healthy Blinking + Low Discomfort"),
-        ("Compensatory", "Moderate Adaptive Strain"),
-        ("4 Quadrants", "Multi-modal psychometric-biometric pairing")
-    ])
+    # =========================================================================
+    # SLIDE 8: Silent Asthenopia Detector (SO-DI 4-Quadrant Matrix)
+    # =========================================================================
+    s8 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s8)
+    add_header(s8, "Clinical Innovation #2", "Subjective-Objective Divergence Index (Silent Asthenopia)")
+
+    # 4 Quadrants
+    quads = [
+        ("🚨 SILENT ASTHENOPIA", "High Objective Suppression + Low Subjective Pain\nCorneal sensory nerve desensitization. The patient feels 'fine' while tears evaporate and Meibomian glands clog. High risk of permanent tissue dropout.", COLOR_CORAL),
+        ("⚠️ CONCORDANT HIGH STRAIN", "Severe Discomfort + Severe Objective Suppression\nAcute alignment: Patient feels severe burning and headache while camera confirms 75%+ blink suppression. Requires immediate micro-break.", COLOR_AMBER),
+        ("🛡️ CONCORDANT HOMEOSTASIS", "Low Discomfort + Healthy Physiological Blinking\nOptimal visual equilibrium: Precorneal tear film and ciliary focus remain in healthy biological balance (>=14 blinks/min).", COLOR_EMERALD),
+        ("🔄 COMPENSATORY STRAIN", "Mild to Moderate Divergent Strain\nUser is beginning to show early signs of accommodative fatigue or sporadic blink suppression. Preventative micro-pacing recommended.", COLOR_CYAN),
+    ]
+
+    for i, (q_title, q_desc, q_color) in enumerate(quads):
+        row = i // 2
+        col = i % 2
+        x = 0.8 + (col * 5.95)
+        y = 1.7 + (row * 2.65)
+        add_card(s8, x, y, 5.75, 2.45, border_color=q_color)
+        qbox = s8.shapes.add_textbox(Inches(x + 0.2), Inches(y + 0.15), Inches(5.35), Inches(2.15))
+        qtf = qbox.text_frame
+        qtf.word_wrap = True
+
+        p = qtf.paragraphs[0]
+        p.text = q_title
+        p.font.size = Pt(12)
+        p.font.bold = True
+        p.font.color.rgb = q_color
+
+        p_desc = qtf.add_paragraph()
+        p_desc.text = q_desc
+        p_desc.font.size = Pt(10)
+        p_desc.font.color.rgb = COLOR_WHITE
+        p_desc.space_before = Pt(6)
 
     # =========================================================================
-    # SLIDE 9: 5-Year Digital Eye Twin Simulator
+    # SLIDE 9: 5-Year Digital Eye Twin (Split: Concept + Real Screenshot + Graph)
     # =========================================================================
-    slide9 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide9)
-    add_header(slide9, "Longitudinal Simulation", "Interactive 5-Year Ocular Health Projection Simulator")
+    s9 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s9)
+    add_header(s9, "Longitudinal Simulation", "Interactive 5-Year Ocular Health Projection Simulator")
 
-    add_card(slide9, 0.8, 1.7, 7.8, 5.2)
-    twin_box = slide9.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    twintf = twin_box.text_frame
-    twintf.word_wrap = True
+    # Left card: Concept
+    add_card(s9, 0.8, 1.7, 5.5, 5.2)
+    s9_box = s9.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.1), Inches(4.8))
+    s9tf = s9_box.text_frame
+    s9tf.word_wrap = True
 
-    p = twintf.paragraphs[0]
-    p.text = "A 'Time Machine' for Visual Homeostasis:"
-    p.font.size = Pt(14)
+    p = s9tf.paragraphs[0]
+    p.text = "A 'Time Machine' for Visual Longevity:"
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    twin_points = [
-        ("Why Required:", "Users dismiss eye strain because it accumulates slowly. This simulator visually proves the compounding long-term danger of unmitigated screen exposure."),
-        ("Interactive Horizon Slider:", "Allows users to slide between 1 and 5 years to view projected biophysical deterioration under their exact habits."),
-        ("Side-by-Side Contrast:", "Directly contrasts the Unmitigated Trajectory (red card) against the Preserved Trajectory achieved with AsthenoZero (green card)."),
+    twin_items = [
+        ("The Psychology of Neglect:", "Users ignore eye strain because it accumulates slowly. This simulator visually exposes the compounding 5-year consequences of unmitigated screen exposure."),
+        ("Interactive 1-to-5 Year Slider:", "Users drag the slider to simulate their exact trajectory over time, observing compounding biophysical degradation."),
+        ("Side-by-Side Contrast:", "Directly contrasts the Unmitigated Trajectory (Red Card) against Preserved Homeostasis with AsthenoZero (Green Card)."),
         ("Compounding Biophysical Formulas:", "Simulates Meibomian duct atrophy %, Tear Break-Up Time (TBUT) decay, and intraocular ciliary tonic spasm burden."),
     ]
-    for h, desc in twin_points:
-        p_item = twintf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in twin_items:
+        p_item = s9tf.add_paragraph()
+        p_item.space_before = Pt(6)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide9, 8.9, 1.7, 3.6, 5.2, "3-Year Projection", [
-        ("57.0% vs <5.9%", "Meibomian Gland Atrophy (Unmitigated vs Care)"),
-        ("2.9s vs 10.4s", "Tear Break-Up Time (Severe Dry Eye vs Normal)"),
-        ("90.1 vs 8.5", "Ciliary Spasm Burden / 100 (Cramp vs Fluid)"),
-        ("1 to 5 Years", "Continuous interactive projection horizon"),
-        ("Permanent", "Drop-out risk of Meibomian tarsal ducts")
-    ])
+    # Right side: Embed actual screenshot and trajectory graph
+    add_card(s9, 6.6, 1.7, 5.9, 5.2, border_color=COLOR_CORAL)
+    add_image_safe(s9, "app_eye_twin_slider.jpg", 6.75, 1.85, width=5.6)
+    add_image_safe(s9, "digital_eye_twin_trajectory.png", 6.75, 4.0, width=5.6)
 
     # =========================================================================
-    # SLIDE 10: Behavioral Economics: AsthenoCredits
+    # SLIDE 10: Behavioral Economics (Split: Rules + App Screenshot)
     # =========================================================================
-    slide10 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide10)
-    add_header(slide10, "Behavioral Economics", "AsthenoCredits Economy & Strict Rehabilitation Protocol")
+    s10 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s10)
+    add_header(s10, "Behavioral Economics", "AsthenoCredits Economy & Strict Rehabilitation Protocol")
 
-    add_card(slide10, 0.8, 1.7, 7.8, 5.2)
-    econ_box = slide10.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    econtf = econ_box.text_frame
-    econtf.word_wrap = True
+    # Left card: Economy rules
+    add_card(s10, 0.8, 1.7, 5.5, 5.2)
+    s10_box = s10.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.1), Inches(4.8))
+    s10tf = s10_box.text_frame
+    s10tf.word_wrap = True
 
-    p = econtf.paragraphs[0]
-    p.text = "Physiologically-Gated Digital Habit Enforcement:"
-    p.font.size = Pt(14)
+    p = s10tf.paragraphs[0]
+    p.text = "Physiologically-Gated Habit Enforcement:"
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    econ_points = [
-        ("Why We Replaced OcuCoins with AsthenoCredits:", "Created an aligned, professional economy branded after Asthenopia mitigation ('AsthenoCredits')."),
-        ("Earned Through Clinical Action:", "Users earn credits by performing healthy visual behaviors (+15 Habit Diary, +20 Breaks, +25 Vision Gym, +35 Diagnostics)."),
-        ("Streak Insurance & Vault:", "Users can spend 40 credits on Streak Shields to auto-protect missed days, or 50 credits to repair broken streaks."),
-        ("The Strict Rehabilitation Protocol:", "When streak is broken and coins hit 0, bypass purchases are LOCKED. The user must complete all 3 physical therapy tasks to reinstate their streak."),
+    econ_items = [
+        ("Branded AsthenoCredits Economy:", "Rebranded currency to align with Asthenopia mitigation. Users earn credits solely by performing verifiable clinical habits."),
+        ("Earning Schedule:", "+15 🪙 Daily Habit Diary, +20 🪙 20-20-20 Micro-Break, +25 🪙 Vision Gym Exercise, +35 🪙 Webcam Blink Diagnostic."),
+        ("Vault Protections:", "Spend 40 🪙 on Streak Shields to auto-protect missed days, or 50 🪙 to repair broken streaks."),
+        ("The Strict Rehabilitation Protocol:", "Unlike consumer apps that allow cash bypasses, when your streak breaks and coins hit 0, bypass is locked. You must complete 3 physical therapy milestones to reinstate your streak!"),
     ]
-    for h, desc in econ_points:
-        p_item = econtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in econ_items:
+        p_item = s10tf.add_paragraph()
+        p_item.space_before = Pt(6)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide10, 8.9, 1.7, 3.6, 5.2, "Economy Structure", [
-        ("+15 🪙", "Log Daily Screen Diary"),
-        ("+20 🪙", "Complete 20-20-20 Micro-Break"),
-        ("+25 🪙", "Execute Guided Vision Gym Exercise"),
-        ("+35 🪙", "Complete 60s Webcam Blink Diagnostic"),
-        ("+60 🪙", "Strict Rehabilitation Graduation Bonus")
-    ])
+    # Right side: Real screenshot of vault
+    add_card(s10, 6.6, 1.7, 5.9, 5.2, border_color=COLOR_AMBER)
+    add_image_safe(s10, "app_conditions_and_vault.jpg", 6.75, 1.85, width=5.6)
 
     # =========================================================================
-    # SLIDE 11: 20-20-20 Smart Adaptive Break Suite
+    # SLIDE 11: 20-20-20 Smart Adaptive Break Suite (Visual 3-Tier Grid)
     # =========================================================================
-    slide11 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide11)
-    add_header(slide11, "Pacing & Ergonomic Interlocks", "Smart AI Adaptive Pacing & Neuro-Acoustic Suite")
+    s11 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s11)
+    add_header(s11, "Pacing & Ergonomic Safeguards", "Smart AI Adaptive Pacing & Neuro-Acoustic Suite")
 
-    add_card(slide11, 0.8, 1.7, 7.8, 5.2)
-    pace_box = slide11.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    pacetf = pace_box.text_frame
-    pacetf.word_wrap = True
+    tiers = [
+        ("🔴 Intensive Corneal Recovery", "15m Focus • 5m Rest", "Automatically engaged when asthenopia fatigue score >= 60. Provides frequent micro-pauses to replenish tear film lipid layers.", COLOR_CORAL),
+        ("🟡 Standard Micro-Pacing", "20m Focus • 3m Rest", "Standard 20-20-20 cadence for moderate fatigue scores (35–59). Disengages continuous intraocular ciliary accommodation.", COLOR_AMBER),
+        ("🟢 Sustained Focus & Preventative", "25m Focus • 5m Rest", "Calibrated for low baseline fatigue (<35). Allows sustained deep focus while preserving long-term visual comfort.", COLOR_EMERALD),
+    ]
 
-    p = pacetf.paragraphs[0]
-    p.text = "Pacing Beyond Rigid Fixed Timers:"
-    p.font.size = Pt(14)
+    for i, (t_title, t_cadence, t_desc, t_color) in enumerate(tiers):
+        x = 0.8 + (i * 4.0)
+        add_card(s11, x, 1.7, 3.75, 3.3, border_color=t_color)
+        tbox = s11.shapes.add_textbox(Inches(x + 0.15), Inches(1.85), Inches(3.45), Inches(3.0))
+        ttf = tbox.text_frame
+        ttf.word_wrap = True
+
+        p = ttf.paragraphs[0]
+        p.text = t_title
+        p.font.size = Pt(12)
+        p.font.bold = True
+        p.font.color.rgb = t_color
+
+        p_cad = ttf.add_paragraph()
+        p_cad.text = t_cadence
+        p_cad.font.size = Pt(14)
+        p_cad.font.bold = True
+        p_cad.font.color.rgb = COLOR_WHITE
+        p_cad.space_before = Pt(4)
+
+        p_desc = ttf.add_paragraph()
+        p_desc.text = t_desc
+        p_desc.font.size = Pt(10)
+        p_desc.font.color.rgb = COLOR_MUTED
+        p_desc.space_before = Pt(8)
+
+    # Bottom feature card: Interlock & 432 Hz
+    add_card(s11, 0.8, 5.2, 11.7, 1.7, border_color=COLOR_CYAN)
+    bot_box = s11.shapes.add_textbox(Inches(1.0), Inches(5.3), Inches(11.3), Inches(1.5))
+    btf = bot_box.text_frame
+    btf.word_wrap = True
+
+    p = btf.paragraphs[0]
+    p.text = "🔒 AsthenoZero Strict Interlock & 432 Hz Alpha Acoustic Tone"
+    p.font.size = Pt(12.5)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    pace_points = [
-        ("Smart Biometric Adaptive Pacing:", "Dynamically recalibrates interval cadence based on live asthenopia score (15m/5m for severe fatigue >=60, 20m/3m standard, 25m/5m preventative)."),
-        ("AsthenoZero Strict Interlock:", "Eliminates cheating. During a 20-second break, pause and reset controls are disabled, enforcing genuine 20-foot optical rest."),
-        ("432 Hz Calm Alpha Tone Generator:", "Synthesizes zero-latency 432 Hz sine waves with 540 Hz overtones via native browser Web Audio API for neuro-muscular ciliary relaxation."),
-        ("Daily Screen Exposure Budget:", "Allows users to set safe daily limits (e.g. 7.0h), triggering an Asthenopia Overuse Shield when exceeded."),
+    p_sub = btf.add_paragraph()
+    p_sub.text = "• Strict Interlock: During rest breaks, pause and reset controls are disabled, enforcing uninterrupted 20-foot optical recovery without cheating.\n• 432 Hz Synthetic Tone: Generates zero-latency 432 Hz + 540 Hz harmonic sine waves via the browser Web Audio API for neuro-muscular ciliary muscle relaxation."
+    p_sub.font.size = Pt(10.5)
+    p_sub.font.color.rgb = COLOR_WHITE
+    p_sub.space_before = Pt(4)
+
+    # =========================================================================
+    # SLIDE 12: Vision Gym & Physical Therapy (5 Visual Drills)
+    # =========================================================================
+    s12 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s12)
+    add_header(s12, "Ophthalmic Physical Therapy", "Vision Gym: Animated Ocular Muscle Decompression")
+
+    drills = [
+        ("♾️ Figure-8 Pursuit", "Animated SVG infinity loop guides continuous circular tracking to decompress all 6 extraocular rectus muscles.", COLOR_CYAN),
+        ("💧 Meibomian Squeeze", "4-phase isometric drill: 2s Close -> 2s Squeeze -> 2s Open -> 2s Rest to express stagnant tarsal lipid oils.", COLOR_EMERALD),
+        ("🎯 Near-Far Switcher", "Rhythmically shifts optical gaze between near text and 20-foot distance to break tonic ciliary spasm.", COLOR_AMBER),
+        ("🔥 Warm Palming", "Thermal palm heat (40°C) with light exclusion to induce dark photoreceptor recovery and retinal rest.", COLOR_CORAL),
+        ("🧭 Compass Stretch", "8-direction cardinal gaze elongation to relieve chronic extraocular oculomotor muscle stiffness.", COLOR_CYAN),
     ]
-    for h, desc in pace_points:
-        p_item = pacetf.add_paragraph()
-        p_item.space_before = Pt(8)
-        r1 = p_item.add_run()
-        r1.text = f"• {h} "
-        r1.font.bold = True
-        r1.font.size = Pt(11.5)
-        r1.font.color.rgb = COLOR_WHITE
-        r2 = p_item.add_run()
-        r2.text = desc
-        r2.font.size = Pt(10.5)
-        r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide11, 8.9, 1.7, 3.6, 5.2, "Timer Parameters", [
-        ("15m / 5m", "Intensive Corneal Recovery Cadence (Score >=60)"),
-        ("20m / 3m", "Standard 20-20-20 Micro-Pacing"),
-        ("25m / 5m", "Sustained Focus & Preventative Care"),
-        ("432 Hz", "Harmonic Alpha Brainwave Resonance Frequency"),
-        ("100% Locked", "Strict Interlock during break rest intervals")
-    ])
+    for i, (d_title, d_desc, d_color) in enumerate(drills):
+        x = 0.8 + (i * 2.45)
+        add_card(s12, x, 1.7, 2.3, 5.2, border_color=d_color)
+        dbox = s12.shapes.add_textbox(Inches(x + 0.15), Inches(1.85), Inches(2.0), Inches(4.8))
+        dtf = dbox.text_frame
+        dtf.word_wrap = True
+
+        p = dtf.paragraphs[0]
+        p.text = d_title
+        p.font.size = Pt(12)
+        p.font.bold = True
+        p.font.color.rgb = d_color
+
+        p_desc = dtf.add_paragraph()
+        p_desc.text = d_desc
+        p_desc.font.size = Pt(10)
+        p_desc.font.color.rgb = COLOR_WHITE
+        p_desc.space_before = Pt(10)
 
     # =========================================================================
-    # SLIDE 12: Vision Gym & Physical Therapy
+    # SLIDE 13: Clinical Pathology & Targeted Nutrition
     # =========================================================================
-    slide12 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide12)
-    add_header(slide12, "Ophthalmic Physical Therapy", "Vision Gym: Animated Ocular Muscle Decompression")
+    s13 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s13)
+    add_header(s13, "Biochemical Therapeutics", "Clinical Pathology & Targeted Nutritional Ophthalmology")
 
-    add_card(slide12, 0.8, 1.7, 7.8, 5.2)
-    gym_box = slide12.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    gymtf = gym_box.text_frame
-    gymtf.word_wrap = True
+    add_card(s13, 0.8, 1.7, 5.6, 5.2, border_color=COLOR_CORAL)
+    p13_box = s13.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.2), Inches(4.8))
+    ptf13 = p13_box.text_frame
+    ptf13.word_wrap = True
 
-    p = gymtf.paragraphs[0]
-    p.text = "Active Counter-Strain Muscle Rehabilitation:"
-    p.font.size = Pt(14)
+    p = ptf13.paragraphs[0]
+    p.text = "Stratification of 5 Primary Eye Conditions:"
+    p.font.size = Pt(13)
     p.font.bold = True
-    p.font.color.rgb = COLOR_CYAN
+    p.font.color.rgb = COLOR_CORAL
 
-    gym_points = [
-        ("Why Physical Exercises Are Required:", "Looking away is passive. Extraocular rectus muscles and the ciliary body require dynamic elongation and lipid gland compression."),
-        ("Figure-8 Smooth Pursuit:", "Animated SVG infinity loop guides continuous circular gaze tracking to release tonic contractions in the 6 extraocular muscles."),
-        ("4-Phase Meibomian Blink & Squeeze:", "Guides users through Light Close (2s) -> Squeeze Shut (2s) -> Open (2s) -> Rest (2s) to express thickened meibum oils."),
-        ("Near-Far Accommodation Switcher:", "Rhythmically shifts optical focus between near text and 20-foot distance targets, breaking ciliary spasm loops."),
+    c_items = [
+        ("Meibomian Gland Dysfunction (MGD):", "Blink suppression causes meibum stagnation, gland plugging, and rapid tear break-up time (TBUT <5s)."),
+        ("Accommodative Ciliary Spasm:", "Near-point convergence locks ciliary body in continuous spasm, resulting in brow ache and transient distance blur."),
+        ("Contact Lens Micro-Friction Keratitis:", "Hydrophilic lens dehydration under screen air causes friction on corneal epithelium."),
+        ("Convergence Insufficiency:", "Close mobile screens (<14 in) force steep downward gaze and medial rectus muscle fatigue."),
+        ("Circadian Phototoxicity:", "HEV blue light suppresses pineal melatonin, truncating overnight corneal mitotic repair."),
     ]
-    for h, desc in gym_points:
-        p_item = gymtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in c_items:
+        p_item = ptf13.add_paragraph()
+        p_item.space_before = Pt(5)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(9.5)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide12, 8.9, 1.7, 3.6, 5.2, "Clinical Drills", [
-        ("5 Protocols", "Targeted Ocular Relaxation Drills"),
-        ("6 Muscles", "Extraocular rectus & oblique muscles mobilized"),
-        ("4 Phases", "Meibomian Isometric Squeeze Cycle"),
-        ("40°C Warm", "Palming thermal photoreceptor relaxation"),
-        ("0 Plugins", "Pure SVG mathematical vector animations")
-    ])
+    add_card(s13, 6.7, 1.7, 5.8, 5.2, border_color=COLOR_EMERALD)
+    d13_box = s13.shapes.add_textbox(Inches(6.9), Inches(1.85), Inches(5.4), Inches(4.8))
+    dtf13 = d13_box.text_frame
+    dtf13.word_wrap = True
 
-    # =========================================================================
-    # SLIDE 13: Clinical Pathology & Nutrition
-    # =========================================================================
-    slide13 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide13)
-    add_header(slide13, "Biochemical Therapeutics", "Clinical Pathology & Nutritional Ophthalmology")
-
-    add_card(slide13, 0.8, 1.7, 7.8, 5.2)
-    path_box = slide13.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    pathtf = path_box.text_frame
-    pathtf.word_wrap = True
-
-    p = pathtf.paragraphs[0]
-    p.text = "Targeted Disease Vulnerability & Diet Protocols:"
-    p.font.size = Pt(14)
+    p = dtf13.paragraphs[0]
+    p.text = "Evidence-Based AREDS 2 & TFOS DEWS II Protocols:"
+    p.font.size = Pt(13)
     p.font.bold = True
-    p.font.color.rgb = COLOR_CYAN
+    p.font.color.rgb = COLOR_EMERALD
 
-    path_points = [
-        ("Stratification of 5 Conditions:", "Translates user habits into vulnerability for MGD/Dry Eye, Ciliary Spasm, Contact Lens Keratitis, Convergence Insufficiency, and Phototoxicity."),
-        ("Evidence-Based Clinical Nutrition:", "Formulated from AREDS 2 and TFOS DEWS II international dry eye clinical trials."),
-        ("Omega-3 Fatty Acids (EPA/DHA):", "Lowers the melting point of meibum lipid secretions so oils flow smoothly over the cornea."),
-        ("Macular Carotenoids (Lutein & Zeaxanthin):", "Acts as an internal biological blue-light filter, absorbing high-energy 450-480nm wavelengths before reaching the retina."),
+    diet_items = [
+        ("Omega-3 Fatty Acids (1,000–1,200 mg/day):", "Lowers the melting point of meibum lipids so oils flow smoothly over the cornea."),
+        ("Macular Carotenoids (Lutein 10mg + Zeaxanthin 2mg):", "Internal blue-light filter absorbing high-energy visible wavelengths (450-480nm)."),
+        ("Bioflavonoids & Anthocyanins:", "Wild blueberries & bilberries enhance microcapillary blood flow to extraocular muscles."),
+        ("Systemic Hydration Protocol (2.5–3.0 L/day):", "Prevents hyperosmolar tear film breakdown and burning sensations."),
+        ("Magnesium Glycinate (200–300 mg):", "Promotes nocturnal corneal epithelial repair and relaxes hyper-contracted muscles."),
     ]
-    for h, desc in path_points:
-        p_item = pathtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in diet_items:
+        p_item = dtf13.add_paragraph()
+        p_item.space_before = Pt(5)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(9.5)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide13, 8.9, 1.7, 3.6, 5.2, "Clinical Prescriptions", [
-        ("1,000 – 1,200 mg", "Daily EPA & DHA Omega-3 Fatty Acids"),
-        ("10 mg / 2 mg", "Daily Lutein & Zeaxanthin Macular Carotenoids"),
-        ("2.5 – 3.0 Liters", "Daily Hydration to prevent tear hyperosmolarity"),
-        ("200 – 300 mg", "Magnesium Glycinate for nocturnal epithelial repair"),
-        ("5 Conditions", "Pathologies mapped to individual user habits")
-    ])
-
     # =========================================================================
-    # SLIDE 14: Competitive Advantage Matrix
+    # SLIDE 14: Competitive Advantage Matrix (Contrast Table)
     # =========================================================================
-    slide14 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide14)
-    add_header(slide14, "Market Differentiation", "AsthenoZero vs Existing Commercial Solutions")
+    s14 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s14)
+    add_header(s14, "Market Differentiation", "AsthenoZero vs Existing Commercial Solutions")
 
-    add_card(slide14, 0.8, 1.7, 11.7, 5.2)
-    comp_box = slide14.shapes.add_textbox(Inches(1.0), Inches(1.9), Inches(11.3), Inches(4.8))
-    comptf = comp_box.text_frame
-    comptf.word_wrap = True
+    add_card(s14, 0.8, 1.7, 11.7, 5.2)
+    s14_box = s14.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(11.3), Inches(4.8))
+    s14tf = s14_box.text_frame
+    s14tf.word_wrap = True
 
-    p = comptf.paragraphs[0]
+    p = s14tf.paragraphs[0]
     p.text = "Feature-by-Feature Competitor Benchmark:"
-    p.font.size = Pt(14)
+    p.font.size = Pt(13)
     p.font.bold = True
     p.font.color.rgb = COLOR_CYAN
 
-    comp_rows = [
-        ("Predictive ML Risk Scoring (CV MAE 2.40)", "AsthenoZero: YES (Trained Ridge)", "Competitors: NONE (Static questionnaires or none)"),
-        ("Incomplete vs Complete Blink Ratio", "AsthenoZero: YES (EAR min calculation)", "Competitors: NONE (Binary open/close count only)"),
+    matrix_rows = [
+        ("Predictive ML Risk Scoring (CV MAE 2.40)", "AsthenoZero: YES (Trained L2 Ridge)", "Competitors: NONE (Arbitrary scores or static surveys)"),
+        ("Incomplete vs Complete Blink Ratio & Pump %", "AsthenoZero: YES (EAR min formulation)", "Competitors: NONE (Binary open/close count only)"),
         ("Zero-Hardware Screen Distance & Posture", "AsthenoZero: YES (Canthal Triangulation)", "Competitors: NONE (Requires LiDAR or unmonitored)"),
-        ("Silent Asthenopia Divergence Index (SO-DI)", "AsthenoZero: YES (Subjective vs Objective)", "Competitors: NONE (No multi-modal cross-analysis)"),
+        ("Silent Asthenopia Divergence Index (SO-DI)", "AsthenoZero: YES (Multi-modal cross-analysis)", "Competitors: NONE (No psychometric-biometric pairing)"),
         ("Interactive 5-Year Digital Eye Twin", "AsthenoZero: YES (1-5 Year Simulator)", "Competitors: NONE (Zero long-term predictive models)"),
         ("Habit Economy with Strict Physiological Lock", "AsthenoZero: YES (AsthenoCredits + Drills)", "Competitors: NONE (Cash bypass, ad views, or snoozes)"),
-        ("Zero-Retention Local RAM Privacy", "AsthenoZero: YES (0 frames stored)", "Competitors: Varies (Often streams to cloud/servers)"),
+        ("Ophthalmic Vision Gym (SVG Visual Coaches)", "AsthenoZero: YES (5 Guided Animated Drills)", "Competitors: NONE (Static bulleted text tips)"),
+        ("Zero-Retention Local RAM Privacy Architecture", "AsthenoZero: YES (0 frames stored)", "Competitors: Varies (Often streams video to cloud)"),
     ]
 
-    for f_name, az_val, comp_val in comp_rows:
-        p_row = comptf.add_paragraph()
-        p_row.space_before = Pt(6)
+    for f_name, az_val, comp_val in matrix_rows:
+        p_row = s14tf.add_paragraph()
+        p_row.space_before = Pt(5)
         r_f = p_row.add_run()
         r_f.text = f"• {f_name}: "
         r_f.font.bold = True
-        r_f.font.size = Pt(11)
+        r_f.font.size = Pt(10.5)
         r_f.font.color.rgb = COLOR_WHITE
 
         r_az = p_row.add_run()
         r_az.text = f"[{az_val}]  "
         r_az.font.bold = True
-        r_az.font.size = Pt(10.5)
+        r_az.font.size = Pt(10)
         r_az.font.color.rgb = COLOR_EMERALD
 
         r_comp = p_row.add_run()
         r_comp.text = f"vs  {comp_val}"
-        r_comp.font.size = Pt(10)
+        r_comp.font.size = Pt(9.5)
         r_comp.font.color.rgb = COLOR_MUTED
 
     # =========================================================================
-    # SLIDE 15: Deployment & Conclusion
+    # SLIDE 15: Deployment, Privacy & Conclusion
     # =========================================================================
-    slide15 = prs.slides.add_slide(blank_layout)
-    set_slide_background(slide15)
-    add_header(slide15, "Project Conclusion & Deployment", "Validation, Live Deployment & Future Horizons")
+    s15 = prs.slides.add_slide(blank_layout)
+    set_slide_background(s15)
+    add_header(s15, "Validation & Live Deployment", "Production Status, Privacy Integrity & Future Horizons")
 
-    add_card(slide15, 0.8, 1.7, 7.8, 5.2)
-    end_box = slide15.shapes.add_textbox(Inches(1.1), Inches(1.9), Inches(7.2), Inches(4.8))
-    endtf = end_box.text_frame
-    endtf.word_wrap = True
+    add_card(s15, 0.8, 1.7, 6.0, 5.2, border_color=COLOR_EMERALD)
+    s15_box = s15.shapes.add_textbox(Inches(1.0), Inches(1.85), Inches(5.6), Inches(4.8))
+    s15tf = s15_box.text_frame
+    s15tf.word_wrap = True
 
-    p = endtf.paragraphs[0]
-    p.text = "Deployment, Integrity & Roadmap:"
-    p.font.size = Pt(14)
+    p = s15tf.paragraphs[0]
+    p.text = "🚀 Live Production & Open Source Access:"
+    p.font.size = Pt(13)
     p.font.bold = True
-    p.font.color.rgb = COLOR_CYAN
+    p.font.color.rgb = COLOR_EMERALD
 
-    end_points = [
-        ("Live Cloud Deployment:", "Fully deployed and accessible worldwide at https://asthenozero.streamlit.app/ on Streamlit Community Cloud."),
-        ("Open-Source GitHub Repository:", "Publicly available with full documentation, tests, and CI/CD at https://github.com/Akansha-695/AsthenoZero.git."),
-        ("Clinical & Patent Viability:", "Patent novelty matrix formulated across 7 distinct inventive steps for provisional patent application."),
-        ("Planned Next Steps:", "Direct integration with Smart Home lighting protocols (auto-dimming room lux) and deep pupillometric sympathetic arousal tracking."),
+    end_items = [
+        ("Live Cloud URL:", "Fully deployed on Streamlit Community Cloud: https://asthenozero.streamlit.app/"),
+        ("Open-Source Repository:", "Publicly available on GitHub with complete source code and documentation: https://github.com/Akansha-695/AsthenoZero.git"),
+        ("Zero-Retention Privacy:", "All frames processed in volatile RAM. Zero pictures, videos, or landmark vectors are written to disk or sent to servers (100% HIPAA/GDPR compliant)."),
+        ("Patent Novelty Viability:", "Formulated across 7 distinct inventive steps for provisional patent application."),
+        ("Future Roadmap:", "Smart Home IoT auto-dimming room lights and real-time pupillometric sympathetic stress tracking."),
     ]
-    for h, desc in end_points:
-        p_item = endtf.add_paragraph()
-        p_item.space_before = Pt(8)
+    for h, desc in end_items:
+        p_item = s15tf.add_paragraph()
+        p_item.space_before = Pt(7)
         r1 = p_item.add_run()
         r1.text = f"• {h} "
         r1.font.bold = True
-        r1.font.size = Pt(11.5)
+        r1.font.size = Pt(10.5)
         r1.font.color.rgb = COLOR_WHITE
         r2 = p_item.add_run()
         r2.text = desc
-        r2.font.size = Pt(10.5)
+        r2.font.size = Pt(10)
         r2.font.color.rgb = COLOR_MUTED
 
-    add_numbers_box(slide15, 8.9, 1.7, 3.6, 5.2, "Platform Status", [
-        ("100% Live", "Production Cloud Deployment"),
-        ("15 Slides", "Comprehensive Project Deck"),
-        ("7 Claims", "Patent Novelty Matrix Disclosures"),
-        ("0 Latency", "Web Audio API 432 Hz Sound Engine"),
-        ("v2.5 Pro", "Precision Release Architecture")
-    ])
+    # Right side: Summary Badges Card
+    add_card(s15, 7.1, 1.7, 5.4, 5.2, border_color=COLOR_CYAN)
+    badge_box = s15.shapes.add_textbox(Inches(7.3), Inches(1.85), Inches(5.0), Inches(4.8))
+    btf15 = badge_box.text_frame
+    btf15.word_wrap = True
 
-    # Save to both paths
-    prs.save(str(PPTX_PATH_1))
-    prs.save(str(PPTX_PATH_2))
-    print(f"Presentation saved successfully to:\n - {PPTX_PATH_1}\n - {PPTX_PATH_2}")
+    p = btf15.paragraphs[0]
+    p.text = "💎 Platform Summary by the Numbers:"
+    p.font.size = Pt(13)
+    p.font.bold = True
+    p.font.color.rgb = COLOR_CYAN
+
+    badges = [
+        ("468 Points", "MediaPipe 3D Facial Mesh Topology"),
+        ("MAE 2.40", "Grouped 5-Fold Cross-Validation Accuracy"),
+        ("< 0.70x EAR", "Complete vs Incomplete Blink Threshold"),
+        ("1 to 5 Years", "Interactive Digital Eye Twin Horizon"),
+        ("5 Drills", "Animated SVG Ophthalmic Vision Gym"),
+        ("432 Hz", "Synthetic Alpha Resonance Audio Waves"),
+        ("0 Frames", "Stored (Absolute Client-Side Privacy)"),
+    ]
+    for num, lbl in badges:
+        p_b = btf15.add_paragraph()
+        p_b.space_before = Pt(8)
+        r_n = p_b.add_run()
+        r_n.text = f"{num}  "
+        r_n.font.bold = True
+        r_n.font.size = Pt(14)
+        r_n.font.color.rgb = COLOR_WHITE
+
+        r_l = p_b.add_run()
+        r_l.text = lbl
+        r_l.font.size = Pt(10)
+        r_l.font.color.rgb = COLOR_MUTED
+
+    return prs
+
+
+def save_deck(prs):
+    """Saves presentation deck with fallback if user has PowerPoint open."""
+    paths_to_save = [
+        OUTPUT_DIR / "AsthenoZero_Executive_Deck.pptx",
+        OUTPUT_DIR / "AsthenoZero_Presentation.pptx",
+        PROJECT_ROOT / "AsthenoZero_Executive_Deck.pptx",
+        PROJECT_ROOT / "AsthenoZero_Presentation.pptx",
+    ]
+    for p in paths_to_save:
+        try:
+            prs.save(str(p))
+            print(f"Saved: {p}")
+        except PermissionError:
+            print(f"Notice: {p.name} is currently open in PowerPoint (locked).")
+            fallback = p.parent / f"{p.stem}_updated.pptx"
+            try:
+                prs.save(str(fallback))
+                print(f"Saved to fallback: {fallback}")
+            except Exception as e:
+                print(f"Could not save fallback {fallback}: {e}")
 
 
 if __name__ == "__main__":
-    build_deck()
+    prs = build_deck()
+    save_deck(prs)
+
